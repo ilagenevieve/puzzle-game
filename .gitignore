@@ -1,0 +1,94 @@
+# Node.js / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.npm/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+# Keep example env file
+!.env.example
+
+# Build outputs
+dist/
+build/
+out/
+.output/
+.svelte-kit/
+.vite/
+
+# SQLite database files
+*.sqlite
+*.sqlite3
+*.db
+db/*.sqlite
+db/*.sqlite3
+# Keep database migrations
+!db/migrations/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+.history/
+
+# Testing
+coverage/
+.nyc_output/
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Session store
+sessions.sqlite
+
+# Phaser generated files
+phaser-debug.log
+
+# GSAP license files (if applicable)
+gsap-bonus.tgz
+
+# Workbox generated files
+workbox-*.js
+sw.js
