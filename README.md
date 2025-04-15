@@ -15,8 +15,9 @@ Ocean of Puzzles is currently under active development:
 - ✅ **Phase 1: Foundation** - Complete
 - ✅ **Phase 2: Authentication & Data Layer** - Complete
 - ✅ **Phase 3: Frontend Framework & UI** - Complete
-- 🔄 **Phase 4: Game Engine Integration** - In Progress (60%)
-- 📅 **Phases 5-9** - Planned
+- ✅ **Phase 4: Game Engine Integration** - Complete
+- 🔄 **Phase 5: Game Implementations** - In Progress (20%)
+- 📅 **Phases 6-9** - Planned
 
 See our [implementation status](IMPLEMENTATION_STATUS.md) document for a detailed breakdown of progress.
 
@@ -68,6 +69,40 @@ To dive into development:
 
 5. Visit `http://localhost:3000` to begin your puzzle voyage
 
+### 🧪 Running Tests
+
+Test your ocean voyage before setting sail:
+
+```bash
+# Run all tests
+npm test
+
+# Run frontend tests only
+npm run test:frontend
+
+# Run backend tests only
+npm run test:backend
+
+# Run with coverage reports
+cd frontend && npm run test:coverage
+cd backend && npm run test:coverage
+```
+
+### 🔍 Code Quality Checks
+
+Ensure your code meets our quality standards:
+
+```bash
+# Run linting checks
+npm run lint
+
+# Run type checking (frontend)
+npm run typecheck
+
+# Run all build checks
+./scripts/check-builds.sh
+```
+
 For more detailed setup instructions, check our [environment setup guide](docs/environment-setup.md).
 
 ## 🐳 Puzzle Currents (Game Types)
@@ -104,8 +139,8 @@ Our journey across the puzzle ocean follows these currents:
 1. **Foundation Shores** ✅: Development environment and core architecture
 2. **Authentication Cove** ✅: User accounts and data persistence
 3. **Frontend Framework Bay** ✅: UI components, forms, responsive layouts
-4. **Game Engine Reef** 🔄: Phaser integration and game scene architecture
-5. **Game Implementation Waters**: Individual game implementations
+4. **Game Engine Reef** ✅: Phaser integration and game scene architecture
+5. **Game Implementation Waters** 🔄: Individual game implementations (Nim complete)
 6. **Multiplayer Ocean**: P2P connections for 1v1 gameplay
 7. **AI Islands**: Intelligent computer opponents
 8. **Polish Lagoon**: Animations, sounds, and visual refinements
