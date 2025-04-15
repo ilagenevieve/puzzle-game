@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: puzzle-game-backend
+    ports:
+      - "${PORT:-4000}:4000"
+      - "${PEERJS_PORT:-9000}:9000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./backend/db:/app/db
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=${PORT:-4000}
+      - PEERJS_PORT=${PEERJS_PORT:-9000}
+      - DB_PATH=${DB_PATH:-./db/puzzle_game.sqlite}
+      - SESSION_SECRET=${SESSION_SECRET:-dev_session_secret}
+      - SESSION_MAX_AGE=${SESSION_MAX_AGE:-604800000}
+      - SESSION_INACTIVE_TIMEOUT=${SESSION_INACTIVE_TIMEOUT:-1800000}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3000}
+      - SECURE_COOKIES=${SECURE_COOKIES:-false}
+      - PEERJS_KEY=${PEERJS_KEY:-peerjs}
+      - PEERJS_PATH=${PEERJS_PATH:-/peerjs}
+      - STUN_SERVER=${STUN_SERVER:-stun:stun.l.google.com:19302}
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: puzzle-game-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - FRONTEND_PORT=${FRONTEND_PORT:-3000}
+      - VITE_API_URL=http://localhost:${PORT:-4000}/api/v1
+      - VITE_SOCKET_URL=http://localhost:${PORT:-4000}
+      - VITE_PEERJS_HOST=localhost
+      - VITE_PEERJS_PORT=${PEERJS_PORT:-9000}
+      - VITE_PEERJS_PATH=${PEERJS_PATH:-/peerjs}
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+
+networks:
+  puzzle-game-network:
+    name: puzzle-game-network
+    driver: bridge

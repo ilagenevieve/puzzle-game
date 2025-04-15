@@ -8,6 +8,17 @@ Welcome to **Ocean of Puzzles** - where mathematical challenges flow like gentle
 
 Whether you're riding solo against our AI dolphins or challenging a friend to a 1v1 match across the digital reef, Ocean of Puzzles provides a refreshing escape into the world of mathematical games.
 
+## 🚧 Project Status
+
+Ocean of Puzzles is currently under active development:
+
+- ✅ **Phase 1: Foundation** - Complete
+- ✅ **Phase 2: Authentication & Data Layer** - Complete
+- 🔄 **Phase 3: Game Engine Integration** - Next Up
+- 📅 **Phases 4-8** - Planned
+
+See our [implementation status](docs/implementation-status.md) document for more details.
+
 ## 🐠 Features That Shimmer Like Ocean Treasures
 
 - 🌊 **Mobile-First Design**: Enjoy smooth sailing on any device with our responsive, touch-friendly interface
@@ -27,18 +38,36 @@ Our puzzle ocean is built upon a carefully selected reef of technologies:
 - **Backend**: Node.js + Express (the deep currents supporting our ocean)
 - **Database**: SQLite (storing treasures of game progress)
 - **Multiplayer**: PeerJS (WebRTC) for direct gameplay, Socket.io for signaling (connecting players across the vast ocean)
-- **Animation**: GSAP (creating the gentle sway of ocean elements)
-- **Performance**: Web Workers (AI calculations in the deep), Workbox (caching for smooth sailing)
+- **Authentication**: Session-based with secure HTTP-only cookies
+- **Styling**: SCSS with ocean-themed variables and responsive design
 
 ## 🏝️ Setting Sail (Setup)
 
 To dive into development:
 
-1. Clone the repository to your local shore
-2. Navigate to the project's harbor: `cd puzzle-game`
-3. Copy `.env.example` to `.env` and fill with your local treasures
-4. Launch your development vessel: `docker-compose up --build`
+1. Clone the repository to your local shore:
+   ```bash
+   git clone https://github.com/yourusername/puzzle-game.git
+   ```
+
+2. Navigate to the project's harbor:
+   ```bash
+   cd puzzle-game
+   ```
+
+3. Copy `.env.example` to `.env` and fill with your local treasures:
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Launch your development vessel:
+   ```bash
+   docker-compose up --build
+   ```
+
 5. Visit `http://localhost:3000` to begin your puzzle voyage
+
+For more detailed setup instructions, check our [environment setup guide](docs/environment-setup.md).
 
 ## 🐳 Puzzle Currents (Game Types)
 
@@ -51,18 +80,49 @@ Stake your claim on the ocean floor by placing your pieces strategically. Block 
 ### Dots-and-Boxes
 Connect the dots like mapping stars across the night ocean sky. Complete boxes to claim territory in this classic game of spatial awareness.
 
+## 🗺️ Project Structure
+
+The project follows a monorepo structure:
+
+```
+puzzle-game/
+├── frontend/           # Svelte frontend application
+├── backend/            # Express backend API
+├── docs/               # Project documentation
+│   ├── architecture.md
+│   ├── implementation-status.md
+│   └── ...
+├── docker-compose.yml  # Development environment
+└── README.md           # You are here!
+```
+
 ## 🌊 Voyage Map (Development Roadmap)
 
 Our journey across the puzzle ocean follows these currents:
 
-1. **Foundation Shores**: Setting up the development environment and core architecture
-2. **Authentication Cove**: Implementing user accounts and data persistence
-3. **UI Reef**: Building the frontend framework and responsive design
-4. **Game Engine Bay**: Integrating Phaser and implementing core game mechanics
-5. **Multiplayer Ocean**: Establishing P2P connections for 1v1 gameplay
-6. **AI Islands**: Developing intelligent computer opponents
-7. **Polish Lagoon**: Adding animations, sounds, and visual refinements
-8. **Deployment Harbor**: Testing and launching our vessel to the open web
+1. **Foundation Shores** ✅: Development environment and core architecture
+2. **Authentication Cove** ✅: User accounts and data persistence
+3. **Game Engine Bay** 🔄: Phaser integration and core game mechanics
+4. **Game Implementation**: Individual game implementations
+5. **Multiplayer Ocean**: P2P connections for 1v1 gameplay
+6. **AI Islands**: Intelligent computer opponents
+7. **Polish Lagoon**: Animations, sounds, and visual refinements
+8. **Deployment Harbor**: Testing and launching to production
+
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- [Architecture Overview](docs/architecture.md)
+- [Frontend Architecture](docs/frontend-architecture.md)
+- [Database Design](docs/database-design.md)
+- [Authentication](docs/authentication.md)
+- [Implementation Status](docs/implementation-status.md)
+- [Environment Setup](docs/environment-setup.md)
+
+## 🤝 Contributing
+
+We welcome contributions! Please check our [contribution guidelines](docs/dev-workflow/git-workflow.md) before getting started.
 
 ## 🏖️ Join Our Ocean Adventure
 

@@ -1,0 +1,43 @@
+{
+  "name": "ocean-puzzles-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Frontend for Ocean of Puzzles game",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint --ext .js,.svelte src",
+    "lint:fix": "eslint --ext .js,.svelte src --fix",
+    "typecheck": "svelte-check"
+  },
+  "dependencies": {
+    "gsap": "3.12.3",
+    "peerjs": "1.5.1",
+    "phaser": "3.70.0",
+    "socket.io-client": "4.7.2",
+    "svelte": "4.2.8",
+    "svelte-navigator": "3.2.2"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.0.1",
+    "@testing-library/svelte": "^4.0.5",
+    "@vitest/ui": "^1.0.4",
+    "eslint": "^8.55.0",
+    "eslint-plugin-svelte": "^2.35.1",
+    "jsdom": "^23.0.1",
+    "sass": "^1.69.5",
+    "svelte-check": "^3.6.2",
+    "svelte-preprocess": "^5.1.1",
+    "vite": "^5.0.8",
+    "vitest": "^1.0.4",
+    "workbox-window": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

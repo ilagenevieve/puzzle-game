@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: puzzle-game-backend-prod
+    ports:
+      - "${PORT:-4000}:4000"
+      - "${PEERJS_PORT:-9000}:9000"
+    volumes:
+      - ./backend/db:/app/db
+    environment:
+      - NODE_ENV=production
+      - PORT=${PORT:-4000}
+      - PEERJS_PORT=${PEERJS_PORT:-9000}
+      - DB_PATH=${DB_PATH:-./db/puzzle_game.sqlite}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - SESSION_MAX_AGE=${SESSION_MAX_AGE:-604800000}
+      - SESSION_INACTIVE_TIMEOUT=${SESSION_INACTIVE_TIMEOUT:-1800000}
+      - CORS_ORIGIN=${CORS_ORIGIN:-https://game.example.com}
+      - SECURE_COOKIES=true
+      - PEERJS_KEY=${PEERJS_KEY:-peerjs}
+      - PEERJS_PATH=${PEERJS_PATH:-/peerjs}
+      - STUN_SERVER=${STUN_SERVER:-stun:stun.l.google.com:19302}
+      - TURN_SERVER=${TURN_SERVER}
+      - TURN_USERNAME=${TURN_USERNAME}
+      - TURN_CREDENTIAL=${TURN_CREDENTIAL}
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: puzzle-game-frontend-prod
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - FRONTEND_PORT=${FRONTEND_PORT:-3000}
+      - VITE_API_URL=/api/v1
+      - VITE_SOCKET_URL=/
+      - VITE_PEERJS_HOST=${VITE_PEERJS_HOST:-game.example.com}
+      - VITE_PEERJS_PORT=443
+      - VITE_PEERJS_PATH=${VITE_PEERJS_PATH:-/peerjs}
+      - VITE_PEERJS_SECURE=true
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: puzzle-game-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/www:/var/www/html
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+
+networks:
+  puzzle-game-network:
+    name: puzzle-game-network-prod
+    driver: bridge
