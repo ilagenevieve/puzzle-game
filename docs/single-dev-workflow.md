@@ -156,7 +156,7 @@ git push origin develop
 
 Enjoy the peaceful ocean-themed development experience with colorful marine indicators:
 
-> **Node.js Compatibility Note**: For the best experience, we recommend using Node.js v18 or v20 LTS versions. Our scripts automatically check for compatibility issues with newer versions of Node.js, particularly with the better-sqlite3 dependency.
+> **Node.js Compatibility Note**: The project supports all modern Node.js versions (v18+). As of April 2025, we've updated all dependencies to their latest versions, including better-sqlite3 v11.9.1 for Node.js v22+ compatibility. All dependency conflicts have been resolved to ensure smooth development across all supported versions.
 
 ```bash
 # Launch the interactive ocean-themed development navigator

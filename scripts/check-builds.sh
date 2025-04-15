@@ -59,14 +59,10 @@ function check_node_version() {
   print_status "blue" "🔍 Checking Node.js version compatibility..."
   print_status "green" "✅ Found Node.js $node_version"
   
-  if [ "$node_major_version" -gt "20" ]; then
-    print_status "yellow" "⚠️ You are using Node.js $node_version, but better-sqlite3 may have compatibility issues with Node.js newer than v20."
-    print_status "yellow" "⚠️ For best results, consider using Node.js LTS (v20.x)."
-    print_status "yellow" "⚠️ You can use nvm (Node Version Manager) to switch versions:"
-    print_status "yellow" "   nvm install 20"
-    print_status "yellow" "   nvm use 20"
-    
-    print_status "yellow" "⚠️ Continuing with checks, but you may encounter compilation issues with certain dependencies."
+  if [ "$node_major_version" -ge "18" ]; then
+    print_status "green" "✅ Using Node.js $node_version"
+    print_status "blue" "ℹ️ All modern Node.js versions are now supported"
+    print_status "blue" "ℹ️ LTS versions recommended for production use"
   fi
   
   return 0
