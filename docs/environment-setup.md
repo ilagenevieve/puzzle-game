@@ -6,13 +6,13 @@ This guide explains how to set up your development and production environments f
 
 Before you begin, ensure you have the following installed:
 
-- Node.js (v18 or v20 LTS recommended, v22+ may have compatibility issues with some dependencies)
-- npm (v9 or later)
+- Node.js (v18+, including latest Node.js v22)
+- npm (v10 or later recommended)
 - Docker
 - Docker Compose
 - Git
 
-> **Note about Node.js versions**: The project supports all modern Node.js versions (v18+). We use the latest package versions to ensure optimal compatibility. For production deployments, Node.js LTS versions are generally recommended.
+> **Note about Node.js versions**: The project fully supports all modern Node.js versions (v18+). As of April 2025, we've updated all dependencies to their latest versions, including better-sqlite3 v11.9.1, which is compatible with Node.js v22+. For production deployments, Node.js LTS versions are still recommended for stability.
 
 ## Development Environment
 

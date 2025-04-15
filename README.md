@@ -40,15 +40,15 @@ See our [implementation status](IMPLEMENTATION_STATUS.md) document for a detaile
 
 Our puzzle ocean is built upon a carefully selected reef of technologies:
 
-- **Game Engine**: Phaser 3 (powering our underwater animations)
-- **Frontend**: Svelte + Vite (creating waves of responsive UI)
+- **Game Engine**: Phaser 3 v3.70.0 (powering our underwater animations)
+- **Frontend**: Svelte 4 + Vite 5 (creating waves of responsive UI)
 - **Backend**: Node.js + Express (the deep currents supporting our ocean)
-- **Database**: SQLite (storing treasures of game progress)
-- **Multiplayer**: PeerJS (WebRTC) for direct gameplay, Socket.io for signaling (connecting players across the vast ocean)
-- **Authentication**: Session-based with secure HTTP-only cookies
+- **Database**: better-sqlite3 v11.9.1 (storing treasures of game progress)
+- **Multiplayer**: PeerJS v1.5.2 for direct gameplay, Socket.io v4.7.4 for signaling
+- **Authentication**: Express session with secure HTTP-only cookies
 - **Styling**: SCSS with ocean-themed variables and responsive design
 
-> **Node.js Compatibility**: We support all modern Node.js versions (v18, v20, v22+). The project uses the latest package versions for optimal compatibility and features.
+> **Node.js Compatibility**: We support all modern Node.js versions (v18, v20, v22+). The project uses the latest package versions (as of April 2025) for optimal compatibility and features.
 
 ## 🏝️ Setting Sail (Setup)
 
