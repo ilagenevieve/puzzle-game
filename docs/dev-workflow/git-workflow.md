@@ -70,23 +70,32 @@ Examples:
    git merge develop
    ```
 
-5. **Create Pull Request**: When the feature is complete, use the GitHub CLI to create a pull request
+5. **Push or Merge Directly**: For `develop` branch, you can push directly or use PR method
+   
+   **Option A - Direct Push** (faster for solo development):
    ```bash
-   gh pr create --title "feat: add my feature" --body "Description of the feature" --base develop
+   # After feature is complete
+   git checkout develop
+   git merge feature/my-feature
+   git push origin develop
    ```
-
-6. **Merge**: Merge the PR using the GitHub CLI or web interface
+   
+   **Option B - Pull Request** (for better tracking and history):
    ```bash
+   # Create PR via GitHub CLI
+   gh pr create --title "feat: add my feature" --body "Description of the feature" --base develop
    gh pr merge <PR-NUMBER> --merge
    ```
 
-7. **Clean Up**: Delete the feature branch after successful merge
+6. **Clean Up**: Delete the feature branch after successful merge
    ```bash
    git checkout develop
    git pull origin develop
    git branch -d feature/my-feature
    git push origin --delete feature/my-feature
    ```
+
+> **Note**: When preparing for production (main branch), a pull request with CI checks is required. This provides a final quality check before changes go live.
 
 ### Documentation Changes
 
@@ -126,13 +135,23 @@ For documentation-only changes, we can use a streamlined approach:
    git commit -m "chore: bump version to 1.0.0"
    ```
 
-3. **Create PR to Main**:
+3. **Run Tests and CI Checks Locally**: 
    ```bash
+   # Run the same checks that will run in CI
+   npm run check
+   npm test
+   ```
+
+4. **Create PR to Main** (Required for production):
+   ```bash
+   # Pull request is required for main branch - this triggers CI checks
    gh pr create --title "chore: release v1.0.0" --body "Release version 1.0.0" --base main
+   
+   # After CI passes, merge the PR
    gh pr merge <PR-NUMBER> --merge
    ```
 
-4. **Tag the Release**:
+5. **Tag the Release**:
    ```bash
    git checkout main
    git pull origin main
@@ -140,15 +159,21 @@ For documentation-only changes, we can use a streamlined approach:
    git push origin v1.0.0
    ```
 
-5. **Create GitHub Release** (optional):
+6. **Create GitHub Release**:
    ```bash
    gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
    ```
 
-6. **Merge Back to Develop**:
+7. **Merge Back to Develop**:
    ```bash
    git checkout develop
    git pull origin develop
+   
+   # Direct merge for speed (since this is solo development)
+   git merge main
+   git push origin develop
+   
+   # OR create a PR if you prefer a record of the merge
    gh pr create --title "chore: merge release v1.0.0 back to develop" --body "Sync develop with release" --base develop --head main
    gh pr merge <PR-NUMBER> --merge
    ```
@@ -168,13 +193,21 @@ For documentation-only changes, we can use a streamlined approach:
    git commit -m "fix: critical issue XYZ"
    ```
 
-3. **Create PR to Main**:
+3. **Test Locally**: Verify the fix works
+   ```bash
+   npm test
+   npm run check
+   ```
+
+4. **Create PR to Main** (Required for production):
    ```bash
    gh pr create --title "fix: critical issue XYZ" --body "Fixes critical issue" --base main
+   
+   # After CI passes, merge the PR
    gh pr merge <PR-NUMBER> --merge
    ```
 
-4. **Tag the Hotfix**:
+5. **Tag the Hotfix**:
    ```bash
    git checkout main
    git pull origin main
@@ -182,12 +215,17 @@ For documentation-only changes, we can use a streamlined approach:
    git push origin v1.0.1
    ```
 
-5. **Merge to Develop**:
+6. **Create GitHub Release**:
+   ```bash
+   gh release create v1.0.1 --title "Hotfix 1.0.1" --notes "Fixed critical issue XYZ" --prerelease
+   ```
+
+7. **Apply to Develop Branch** (Direct merge for solo developer):
    ```bash
    git checkout develop
    git pull origin develop
-   gh pr create --title "fix: merge hotfix back to develop" --body "Sync develop with hotfix" --base develop --head main
-   gh pr merge <PR-NUMBER> --merge
+   git merge main
+   git push origin develop
    ```
 
 ## Commit Guidelines
@@ -346,50 +384,42 @@ This approach should only be used for documentation changes, simple bug fixes, o
 
 ## Branch Protection Rules
 
-We have implemented branch protection rules designed for a single-developer workflow while still maintaining code quality and good practices.
+We have implemented branch protection rules optimized for a single-developer workflow while still maintaining code quality and protecting the production branch.
 
-### 1. Main Branch Protection (Relaxed)
+### 1. Main Branch Protection (Production)
 
 - **Target:** `main` branch
 - **Requirements:**
-  - Pull request required before merging
+  - Pull request required before merging to ensure code quality
+  - Status checks required to pass (lint and tests)
+  - Linear history required (no merge commits)
   - Force pushes blocked
   - Branch deletion restricted
   - No required approvals (since we're a single developer)
-  - No required status checks (reducing friction)
 
-### 2. Develop Branch Protection (Relaxed)
+### 2. Develop Branch Protection (Minimal)
 
 - **Target:** `develop` branch
 - **Requirements:**
-  - Pull request required before merging
+  - No pull request required before merging (direct push enabled)
   - Force pushes blocked
   - Branch deletion restricted
-  - No required approvals (since we're a single developer)
   - No required status checks (reducing friction)
 
-### 3. Feature Branches Ruleset (Flexible)
+### 3. Feature/Bugfix/Hotfix Branches (Unrestricted)
 
-- **Target:** All `feature/*` branches
+- **Target:** All `feature/*`, `bugfix/*`, `hotfix/*` branches
 - **Requirements:**
-  - Force pushes blocked
-  - Flexible to allow active development
+  - No restrictions
+  - Full freedom for the solo developer
 
-### 4. Bugfix Branches Ruleset (Flexible)
+This optimized configuration:
+- Protects the main production branch from errors
+- Ensures code quality through CI checks before production releases
+- Eliminates unnecessary friction for a solo developer
+- Allows for rapid development iterations
 
-- **Target:** All `bugfix/*` branches
-- **Requirements:**
-  - Force pushes blocked
-  - Similar flexibility to feature branches
-
-### 5. Release Branches Ruleset (Relaxed)
-
-- **Target:** All `release/*` branches
-- **Requirements:**
-  - Force pushes blocked
-  - Branch deletion restricted
-
-This relaxed configuration still maintains the overall structure but removes barriers that might slow down a solo developer's workflow.
+Protection rules are automatically applied via GitHub Actions whenever changes are made to the `.github/branch-protection.yml` configuration file.
 
 ## Best Practices Summary
 

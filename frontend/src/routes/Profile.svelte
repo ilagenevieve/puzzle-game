@@ -1,11 +1,12 @@
 <script>
   import { onMount } from 'svelte'
-  import { userStore, displayName } from '../stores/user-store'
+  import { userStore, displayName, toastStore } from '../stores/user-store'
   import { getCurrentUser, updateUserProfile, changePassword } from '../services/api'
+  import FormInput from '../components/form/FormInput.svelte'
+  import Button from '../components/form/Button.svelte'
   
   let loading = true
   let error = null
-  let success = null
   let editMode = false
   let isUpdating = false
   let user = null
@@ -20,9 +21,12 @@
   // Form validation flags
   let passwordError = ''
   let confirmPasswordError = ''
+  let displayNameError = ''
+  let emailError = ''
   
   onMount(async () => {
     try {
+      loading = true
       const response = await getCurrentUser()
       if (response && response.data && response.data.user) {
         user = response.data.user
@@ -32,6 +36,7 @@
       }
     } catch (err) {
       error = err.message || 'Failed to load profile'
+      toastStore.show('Failed to load profile data', 'error')
     } finally {
       loading = false
     }
@@ -39,6 +44,7 @@
   
   function toggleEditMode() {
     editMode = !editMode
+    
     if (!editMode) {
       // Reset form when canceling
       formData.display_name = user.display_name || ''
@@ -46,20 +52,41 @@
       formData.current_password = ''
       formData.new_password = ''
       formData.confirm_password = ''
-      // Clear validation errors and success messages
-      passwordError = ''
-      confirmPasswordError = ''
-      success = null
-      error = null
+      
+      // Clear validation errors
+      resetFormErrors()
     }
   }
   
-  function validatePasswordFields() {
-    let isValid = true
-    
-    // Reset errors
+  function resetFormErrors() {
     passwordError = ''
     confirmPasswordError = ''
+    displayNameError = ''
+    emailError = ''
+    error = null
+  }
+  
+  function validateForm() {
+    let isValid = true
+    
+    // Reset all errors
+    resetFormErrors()
+    
+    // Validate display name
+    if (!formData.display_name.trim()) {
+      displayNameError = 'Display name is required'
+      isValid = false
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!formData.email.trim()) {
+      emailError = 'Email is required'
+      isValid = false
+    } else if (!emailRegex.test(formData.email)) {
+      emailError = 'Please enter a valid email address'
+      isValid = false
+    }
     
     // Only validate if changing password
     if (formData.new_password || formData.current_password) {
@@ -83,10 +110,7 @@
   }
   
   async function handleSubmit() {
-    success = null
-    error = null
-    
-    if (!validatePasswordFields()) {
+    if (!validateForm()) {
       return
     }
     
@@ -118,7 +142,8 @@
         userStore.setUser(user)
       }
       
-      success = 'Profile updated successfully'
+      // Show success message
+      toastStore.show('Profile updated successfully', 'success')
       
       // Reset password fields
       formData.current_password = ''
@@ -129,6 +154,7 @@
       editMode = false
     } catch (err) {
       error = err.message || 'Failed to update profile'
+      toastStore.show(error, 'error')
     } finally {
       isUpdating = false
     }
@@ -138,19 +164,31 @@
 <section class="profile-page">
   <div class="profile-header">
     <h1>My Profile</h1>
-    {#if !editMode}
-      <button class="edit-button" on:click={toggleEditMode}>Edit Profile</button>
+    {#if !editMode && user}
+      <Button 
+        variant="primary" 
+        onClick={toggleEditMode} 
+        icon="✏️"
+      >
+        Edit Profile
+      </Button>
     {/if}
   </div>
   
-  {#if success}
-    <div class="success-message">{success}</div>
-  {/if}
-  
   {#if loading}
-    <div class="loading">Loading profile...</div>
-  {:else if error}
-    <div class="error">{error}</div>
+    <div class="loading">
+      <div class="wave-loader">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+      </div>
+      <p>Loading profile...</p>
+    </div>
+  {:else if error && !user}
+    <div class="error">
+      <p>{error}</p>
+      <Button variant="primary" onClick={() => window.location.reload()}>Try Again</Button>
+    </div>
   {:else if user}
     <div class="profile-container">
       <div class="profile-card">
@@ -180,75 +218,86 @@
         {:else}
           <!-- Edit Mode -->
           <form class="edit-form" on:submit|preventDefault={handleSubmit}>
-            <div class="form-group">
-              <label for="display_name">Display Name</label>
-              <input 
-                type="text" 
-                id="display_name" 
-                bind:value={formData.display_name} 
-                placeholder="Display Name" 
-              />
-            </div>
+            <FormInput
+              id="display_name"
+              label="Display Name"
+              type="text"
+              value={formData.display_name}
+              error={displayNameError}
+              placeholder="Enter your display name"
+              disabled={isUpdating}
+              required={true}
+              on:input={(e) => formData.display_name = e.target.value}
+            />
             
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                bind:value={formData.email} 
-                placeholder="Email" 
-              />
-            </div>
+            <FormInput
+              id="email"
+              label="Email Address"
+              type="email"
+              value={formData.email}
+              error={emailError}
+              placeholder="Enter your email address"
+              disabled={isUpdating}
+              required={true}
+              on:input={(e) => formData.email = e.target.value}
+            />
             
             <h3>Change Password</h3>
-            <div class="form-group">
-              <label for="current_password">Current Password</label>
-              <input 
-                type="password" 
-                id="current_password" 
-                class:is-invalid={passwordError && formData.current_password.length === 0}
-                bind:value={formData.current_password} 
-                placeholder="Current Password" 
-                disabled={isUpdating}
-              />
-              {#if passwordError}
-                <div class="invalid-feedback">{passwordError}</div>
-              {/if}
-            </div>
+            <FormInput
+              id="current_password"
+              label="Current Password"
+              type="password"
+              value={formData.current_password}
+              error={passwordError}
+              placeholder="Enter your current password"
+              disabled={isUpdating}
+              autocomplete="current-password"
+              on:input={(e) => formData.current_password = e.target.value}
+            />
             
-            <div class="form-group">
-              <label for="new_password">New Password</label>
-              <input 
-                type="password" 
-                id="new_password" 
-                class:is-invalid={passwordError && formData.new_password.length > 0 && formData.new_password.length < 8}
-                bind:value={formData.new_password} 
-                placeholder="New Password" 
-                disabled={isUpdating}
-              />
-              <small class="form-text text-muted">Leave blank to keep current password</small>
-            </div>
+            <FormInput
+              id="new_password"
+              label="New Password"
+              type="password"
+              value={formData.new_password}
+              placeholder="Enter your new password"
+              disabled={isUpdating}
+              helpText="Leave blank to keep current password. Must be at least 8 characters."
+              minlength="8"
+              autocomplete="new-password"
+              on:input={(e) => formData.new_password = e.target.value}
+            />
             
-            <div class="form-group">
-              <label for="confirm_password">Confirm New Password</label>
-              <input 
-                type="password" 
-                id="confirm_password" 
-                class:is-invalid={confirmPasswordError}
-                bind:value={formData.confirm_password} 
-                placeholder="Confirm New Password" 
-                disabled={isUpdating}
-              />
-              {#if confirmPasswordError}
-                <div class="invalid-feedback">{confirmPasswordError}</div>
-              {/if}
-            </div>
+            <FormInput
+              id="confirm_password"
+              label="Confirm New Password"
+              type="password"
+              value={formData.confirm_password}
+              error={confirmPasswordError}
+              placeholder="Confirm your new password"
+              disabled={isUpdating}
+              autocomplete="new-password"
+              on:input={(e) => formData.confirm_password = e.target.value}
+            />
             
             <div class="form-actions">
-              <button type="button" class="cancel-button" on:click={toggleEditMode} disabled={isUpdating}>Cancel</button>
-              <button type="submit" class="save-button" disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save Changes'}
-              </button>
+              <Button 
+                type="button" 
+                variant="secondary" 
+                onClick={toggleEditMode} 
+                disabled={isUpdating}
+              >
+                Cancel
+              </Button>
+              
+              <Button 
+                type="submit" 
+                variant="primary" 
+                loading={isUpdating}
+                disabled={isUpdating}
+              >
+                Save Changes
+              </Button>
             </div>
           </form>
         {/if}
@@ -296,20 +345,6 @@
     h1 {
       margin: 0;
       color: var(--ocean-primary);
-    }
-    
-    .edit-button {
-      background-color: var(--ocean-primary);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      
-      &:hover {
-        background-color: var(--ocean-secondary);
-      }
     }
   }
   
@@ -390,31 +425,6 @@
     padding: 1.5rem;
   }
   
-  .form-group {
-    margin-bottom: 1.2rem;
-    
-    label {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--ocean-text-light);
-      margin-bottom: 0.5rem;
-    }
-    
-    input {
-      width: 100%;
-      padding: 0.8rem;
-      border: 1px solid var(--ocean-accent-light);
-      border-radius: 4px;
-      font-size: 1rem;
-      
-      &:focus {
-        outline: none;
-        border-color: var(--ocean-primary);
-        box-shadow: 0 0 0 2px rgba(var(--ocean-primary-rgb), 0.2);
-      }
-    }
-  }
-  
   h3 {
     font-size: 1.1rem;
     color: var(--ocean-text);
@@ -428,34 +438,6 @@
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 1.5rem;
-    
-    button {
-      padding: 0.7rem 1.2rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    
-    .cancel-button {
-      background-color: transparent;
-      border: 1px solid var(--ocean-text-light);
-      color: var(--ocean-text);
-      
-      &:hover {
-        background-color: var(--ocean-bg-light);
-      }
-    }
-    
-    .save-button {
-      background-color: var(--ocean-primary);
-      border: none;
-      color: white;
-      
-      &:hover {
-        background-color: var(--ocean-secondary);
-      }
-    }
   }
   
   .stats-card {
@@ -504,35 +486,51 @@
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
   }
   
   .error {
     color: var(--ocean-error);
   }
   
-  .success-message {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    background-color: rgba(46, 204, 113, 0.1);
-    border: 1px solid #2ecc71;
-    color: #2ecc71;
-    border-radius: 6px;
-    text-align: center;
+  .wave-loader {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 50px;
+    width: 100px;
+    margin-bottom: 1rem;
+    
+    .wave {
+      width: 8px;
+      height: 40px;
+      margin: 0 3px;
+      background-color: var(--ocean-primary);
+      border-radius: 10px;
+      animation: wave 1s ease-in-out infinite;
+      
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      
+      &:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+    }
   }
   
-  .invalid-feedback {
-    color: var(--ocean-error);
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-  }
-  
-  .is-invalid {
-    border-color: var(--ocean-error) !important;
-  }
-  
-  .form-text {
-    font-size: 0.85rem;
-    color: var(--ocean-text-light);
-    margin-top: 0.25rem;
+  @keyframes wave {
+    0% {
+      height: 10px;
+    }
+    50% {
+      height: 40px;
+    }
+    100% {
+      height: 10px;
+    }
   }
 </style>

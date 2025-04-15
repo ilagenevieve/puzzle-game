@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop, feature/*, bugfix/*, release/* ]
+    branches: [ develop, feature/*, bugfix/*, release/*, hotfix/* ]
     paths-ignore:
       - '**/*.md'
       - 'docs/**'
@@ -10,7 +10,7 @@ on:
       - '.github/pull_request_template.md'
       - '.github/*.md'
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]  # Pull requests are only required for the main branch
 
 jobs:
   check-docs-only:
@@ -82,34 +82,53 @@ jobs:
     - name: Project Structure Check
       id: structure-check
       run: |
-        echo "Checking project structure..."
+        echo "🌊 Checking Ocean of Puzzles project structure..."
         HAS_ROOT_PACKAGE="false"
         HAS_FRONTEND="false"
         HAS_BACKEND="false"
+        HAS_SCRIPTS="false"
         
         if [ -f "package.json" ]; then
-          echo "Root package.json found"
+          echo "🐠 Root package.json found"
           HAS_ROOT_PACKAGE="true"
         fi
         
         if [ -f "frontend/package.json" ]; then
-          echo "Frontend package.json found"
+          echo "🐬 Frontend package.json found"
           HAS_FRONTEND="true"
         fi
         
         if [ -f "backend/package.json" ]; then
-          echo "Backend package.json found" 
+          echo "🐙 Backend package.json found" 
           HAS_BACKEND="true"
+        fi
+        
+        if [ -d "scripts" ]; then
+          echo "🧜‍♀️ Ocean-themed development scripts found"
+          HAS_SCRIPTS="true"
+          
+          # Check for the script files
+          if [ -f "scripts/start-dev.sh" ] && [ -f "scripts/dev-with-logs.sh" ] && [ -f "scripts/check-builds.sh" ]; then
+            echo "🐳 All development scripts verified"
+            
+            # Create test logs directory to verify script functionality
+            mkdir -p logs
+            chmod 755 logs
+            echo "🌴 Created logs directory for development scripts"
+          else
+            echo "⚠️ Some development scripts may be missing"
+          fi
         fi
         
         echo "has_root=$HAS_ROOT_PACKAGE" >> $GITHUB_OUTPUT
         echo "has_frontend=$HAS_FRONTEND" >> $GITHUB_OUTPUT
         echo "has_backend=$HAS_BACKEND" >> $GITHUB_OUTPUT
+        echo "has_scripts=$HAS_SCRIPTS" >> $GITHUB_OUTPUT
         
     - name: Install Root Dependencies
       if: steps.structure-check.outputs.has_root == 'true'
       run: |
-        echo "Installing root dependencies..."
+        echo "🌊 Installing root dependencies..."
         npm ci || npm install
       continue-on-error: true
       
@@ -117,7 +136,7 @@ jobs:
       if: steps.structure-check.outputs.has_frontend == 'true'
       working-directory: ./frontend
       run: |
-        echo "Installing frontend dependencies..."
+        echo "🏄‍♂️ Installing frontend dependencies..."
         npm ci || npm install
       continue-on-error: true
       
@@ -125,46 +144,66 @@ jobs:
       if: steps.structure-check.outputs.has_backend == 'true'
       working-directory: ./backend
       run: |
-        echo "Installing backend dependencies..."
+        echo "🐠 Installing backend dependencies..."
         npm ci || npm install
+        
+        # Check for nodemon and install globally if needed
+        if ! npm list -g nodemon &> /dev/null; then
+          echo "🦞 Installing nodemon globally for backend development..."
+          npm install -g nodemon
+        else
+          echo "🦀 Nodemon is already installed globally"
+        fi
       continue-on-error: true
     
     - name: Lint
       run: |
+        echo "🐬 Running code quality checks..."
         if [ -f "package.json" ] && grep -q "\"lint\"" package.json; then
+          echo "🐳 Running project-wide linting..."
           npm run lint
         elif [ -f "frontend/package.json" ] && grep -q "\"lint\"" frontend/package.json; then
+          echo "🐙 Running frontend linting..."
           cd frontend && npm run lint
         elif [ -f "backend/package.json" ] && grep -q "\"lint\"" backend/package.json; then
+          echo "🦑 Running backend linting..."
           cd backend && npm run lint
         else
-          echo "No lint script found, skipping"
+          echo "🦐 No lint script found, skipping"
         fi
       continue-on-error: true
       
     - name: Type Check
       run: |
+        echo "🧜‍♀️ Running type checks..."
         if [ -f "package.json" ] && grep -q "\"typecheck\"" package.json; then
+          echo "🌊 Running project-wide type checking..."
           npm run typecheck
         elif [ -f "frontend/package.json" ] && grep -q "\"typecheck\"" frontend/package.json; then
+          echo "🐋 Running frontend type checking..."
           cd frontend && npm run typecheck
         elif [ -f "backend/package.json" ] && grep -q "\"typecheck\"" backend/package.json; then
+          echo "🦈 Running backend type checking..."
           cd backend && npm run typecheck
         else
-          echo "No typecheck script found, skipping"
+          echo "🐡 No typecheck script found, skipping"
         fi
       continue-on-error: true
       
     - name: Test
       run: |
+        echo "🐚 Running tests with our dolphin QA inspector..."
         if [ -f "package.json" ] && grep -q "\"test\"" package.json; then
+          echo "🌴 Running all project tests..."
           npm test
         elif [ -f "frontend/package.json" ] && grep -q "\"test\"" frontend/package.json; then
+          echo "🏝️ Running frontend tests..."
           cd frontend && npm test
         elif [ -f "backend/package.json" ] && grep -q "\"test\"" backend/package.json; then
+          echo "🐬 Running backend tests..."
           cd backend && npm test
         else
-          echo "No test script found, skipping"
+          echo "🧿 No test script found, skipping"
         fi
       continue-on-error: true
 
@@ -177,8 +216,9 @@ jobs:
       
       - name: Documentation only change
         run: |
-          echo "::notice::Only documentation files were changed. Skipping build and test steps."
-          echo "This is a documentation-only change, so CI checks are automatically passing."
+          echo "🌊 Ocean Notice: Only documentation files were changed"
+          echo "::notice::🐬 Only documentation files were changed. Skipping build and test steps."
+          echo "🐚 This is a documentation-only change, so CI checks are automatically passing."
       
       - name: Verify Documentation Files
         run: |

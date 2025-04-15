@@ -60,13 +60,35 @@ STUN_SERVER=stun:stun.l.google.com:19302
 
 ### Start Development Environment
 
-Using Docker (recommended):
+#### Ocean-Themed Interactive Development (Recommended)
+
+Experience our soothing ocean-themed development environment:
+
+```bash
+# Start the ocean-themed interactive development navigator
+npm run start:dev
+```
+
+This launches our colorful marine-themed menu with these options:
+- 🌊 **Calm Waters** - Standard development (frontend + backend)
+- 🔍 **Deep Dive** - Enhanced mode with detailed logging
+- 🧪 **Treasure Hunter** - Run checks first, then start development
+- 🏄‍♂️ **Surfing** - Frontend only (UI development)
+- 🐠 **Coral Reef** - Backend only (API development)
+
+Our development scripts will automatically:
+- Create necessary logs directory with proper permissions
+- Detect and install missing dependencies including nodemon (globally if needed)
+- Provide clear, colorful feedback about the environment setup process
+- Save detailed logs to the project's logs directory
+
+#### Using Docker (Alternative)
 
 ```bash
 docker-compose up --build
 ```
 
-This will start:
+These development options will start:
 - Backend API server at http://localhost:4000
 - Frontend dev server at http://localhost:3000
 - PeerJS server at http://localhost:9000

@@ -40,8 +40,80 @@ const createUserStore = () => {
   }
 }
 
+// Create toast notification store
+export const createToastStore = () => {
+  const { subscribe, update } = writable({
+    messages: [],
+    nextId: 1,
+    initialized: false
+  })
+
+  let toastContainer = null
+
+  return {
+    subscribe,
+    // Initialize toast container
+    init: () => {
+      update(state => ({ ...state, initialized: true }))
+      
+      // Create toast container if it doesn't exist
+      if (!toastContainer && typeof document !== 'undefined') {
+        // Check if container already exists
+        toastContainer = document.getElementById('toast-container')
+        
+        if (!toastContainer) {
+          // Create container element
+          toastContainer = document.createElement('div')
+          toastContainer.id = 'toast-container'
+          toastContainer.style.position = 'fixed'
+          toastContainer.style.top = '20px'
+          toastContainer.style.right = '20px'
+          toastContainer.style.zIndex = '9999'
+          document.body.appendChild(toastContainer)
+        }
+      }
+    },
+    // Add a new toast message
+    show: (message, type = 'info', duration = 5000) => {
+      const id = Date.now()
+      
+      // Add new toast
+      update(state => {
+        const newMessages = [...state.messages, { id, message, type, duration }]
+        return { ...state, messages: newMessages }
+      })
+      
+      // Auto-remove after duration
+      if (duration > 0) {
+        setTimeout(() => {
+          update(state => {
+            const filteredMessages = state.messages.filter(m => m.id !== id)
+            return { ...state, messages: filteredMessages }
+          })
+        }, duration)
+      }
+      
+      return id
+    },
+    // Remove a specific toast by ID
+    remove: (id) => {
+      update(state => {
+        const filteredMessages = state.messages.filter(m => m.id !== id)
+        return { ...state, messages: filteredMessages }
+      })
+    },
+    // Clear all toasts
+    clear: () => {
+      update(state => ({ ...state, messages: [] }))
+    }
+  }
+}
+
 // Create the main user store
 export const userStore = createUserStore()
+
+// Create the toast notification store
+export const toastStore = createToastStore()
 
 // Derived store for user ID
 export const userId = derived(

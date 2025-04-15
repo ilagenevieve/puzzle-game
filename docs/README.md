@@ -13,7 +13,7 @@ This folder contains comprehensive documentation for the Ocean of Puzzles game p
   - **[API Reference](api.md)**: REST API endpoints and usage
 
 - **Implementation**:
-  - **[Implementation Status](implementation-status.md)**: Current project progress and roadmap
+  - **[Implementation Status](../IMPLEMENTATION_STATUS.md)**: Current project progress and roadmap (root-level file)
   - **[Environment Setup](environment-setup.md)**: How to set up development and production environments
   
 - **Game Mechanics** *(Planned)*:
@@ -28,11 +28,15 @@ This folder contains comprehensive documentation for the Ocean of Puzzles game p
   - [Style Guide](dev-workflow/style-guide.md): Code style and linting rules
   - [CI/CD](dev-workflow/ci-cd.md): Continuous integration and deployment
 
-- **API and Integration** *(Planned)*:
+- **API and Integration**:
   - [API Reference](api.md): REST API endpoints and usage
   - [Frontend-Backend Communication](frontend-backend.md): How frontend and backend components interact
   - [Multiplayer](multiplayer.md): PeerJS, Socket.io implementation, and matchmaking
   - [AI Implementation](ai-implementation.md): Design and algorithms for AI opponents
+  
+- **Component Documentation**:
+  - [Game Engine](../frontend/src/game/README.md): Phaser integration and game scene architecture
+  - *Additional component READMEs will be linked here as they are created*
 
 - **Deployment** *(Planned)*:
   - [Testing & Deployment](testing-deployment.md): Testing strategies and deployment process
@@ -45,8 +49,17 @@ This folder contains comprehensive documentation for the Ocean of Puzzles game p
 
 1. **Documentation in Parallel**: We update documentation alongside code development
 2. **Single Source of Truth**: Each topic has one definitive location
-3. **Versioning Strategy**: Documentation is tagged with code releases
-4. **Ocean-Themed Styling**: Consistent ocean-inspired visual language
+   - Implementation Status lives in the repository root as `IMPLEMENTATION_STATUS.md`
+   - Technical documentation lives in the `/docs` directory
+   - Code-level documentation lives within the code itself
+   - Component-specific READMEs provide context for specific modules
+3. **Documentation Hierarchy**:
+   - Root-level documents provide project-wide information
+   - Component-level READMEs provide implementation details and usage examples
+   - All component READMEs are referenced from central documentation 
+4. **Versioning Strategy**: Documentation is tagged with code releases
+5. **Cross-Referencing**: Documentation links to related topics rather than duplicating content
+6. **Ocean-Themed Styling**: Consistent ocean-inspired visual language
 
 ## Contributing to Documentation
 
