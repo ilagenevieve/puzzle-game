@@ -319,8 +319,12 @@ EOF
 
   print_status "cyan" "🦀 Press Ctrl+C to swim away and shut down all components."
 
-  # Wait for all component processes to finish
-  wait ${COMPONENT_PIDS[@]}
+  # Instead of waiting for processes that might have been started in subshells,
+  # we keep the script running until user presses Ctrl+C, which will trigger the cleanup
+  # Use a simple infinite loop that doesn't consume CPU
+  while true; do
+    sleep 1
+  done
 else
   print_status "red" "
 =================================================
