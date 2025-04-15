@@ -44,11 +44,35 @@ const createUserStore = () => {
 export const createToastStore = () => {
   const { subscribe, update } = writable({
     messages: [],
-    nextId: 1
+    nextId: 1,
+    initialized: false
   })
+
+  let toastContainer = null
 
   return {
     subscribe,
+    // Initialize toast container
+    init: () => {
+      update(state => ({ ...state, initialized: true }))
+      
+      // Create toast container if it doesn't exist
+      if (!toastContainer && typeof document !== 'undefined') {
+        // Check if container already exists
+        toastContainer = document.getElementById('toast-container')
+        
+        if (!toastContainer) {
+          // Create container element
+          toastContainer = document.createElement('div')
+          toastContainer.id = 'toast-container'
+          toastContainer.style.position = 'fixed'
+          toastContainer.style.top = '20px'
+          toastContainer.style.right = '20px'
+          toastContainer.style.zIndex = '9999'
+          document.body.appendChild(toastContainer)
+        }
+      }
+    },
     // Add a new toast message
     show: (message, type = 'info', duration = 5000) => {
       const id = Date.now()

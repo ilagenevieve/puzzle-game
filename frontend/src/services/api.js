@@ -1,3 +1,6 @@
+import logger from './logger'
+import { ApiError, AuthError, ValidationError } from './error-handler'
+
 const API_BASE = import.meta.env.VITE_API_URL || '/api/v1'
 
 /**
@@ -7,6 +10,15 @@ const API_BASE = import.meta.env.VITE_API_URL || '/api/v1'
  * @returns {Promise<Object>} API response
  */
 async function apiRequest(endpoint, options = {}) {
+  const requestId = Math.random().toString(36).substring(2, 15)
+  
+  // Log the request
+  logger.debug(`API Request [${requestId}]: ${options.method || 'GET'} ${endpoint}`, {
+    requestId,
+    endpoint,
+    method: options.method || 'GET',
+  })
+  
   // Default options for all requests
   const defaultOptions = {
     headers: {
@@ -24,19 +36,90 @@ async function apiRequest(endpoint, options = {}) {
   }
 
   try {
+    const startTime = performance.now()
     const response = await fetch(`${API_BASE}${endpoint}`, fetchOptions)
-    const data = await response.json()
+    const endTime = performance.now()
+    
+    let data
+    try {
+      data = await response.json()
+    } catch (parseError) {
+      // Handle JSON parse error
+      logger.error(`API Response not JSON [${requestId}]`, {
+        requestId,
+        status: response.status,
+        statusText: response.statusText,
+        error: parseError.message,
+        duration: Math.round(endTime - startTime),
+      })
+      
+      throw new ApiError(
+        'Invalid server response format',
+        response.status,
+        'INVALID_RESPONSE'
+      )
+    }
+    
+    // Log the response
+    logger.debug(`API Response [${requestId}]: ${response.status}`, {
+      requestId,
+      status: response.status,
+      success: response.ok,
+      duration: Math.round(endTime - startTime),
+    })
 
     if (!response.ok) {
-      // Format error consistently with message from server or fallback
+      // Map API errors to appropriate error types
       const errorMsg = data.error?.message || 'Something went wrong'
-      throw new Error(errorMsg)
+      const errorCode = data.error?.code || `ERR_${response.status}`
+      const errorDetails = data.error?.details || []
+      
+      // Handle different error types
+      if (response.status === 401 || response.status === 403) {
+        throw new AuthError(errorMsg, errorCode)
+      } else if (response.status === 400 && errorDetails.length > 0) {
+        throw new ValidationError(errorMsg, errorDetails, errorCode)
+      } else {
+        throw new ApiError(errorMsg, response.status, errorCode, data.error)
+      }
     }
 
     return data
   } catch (error) {
-    console.error(`API request failed for ${endpoint}:`, error)
-    throw error
+    // Don't double-wrap our own errors
+    if (error instanceof ApiError || error instanceof AuthError || error instanceof ValidationError) {
+      throw error
+    }
+    
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      logger.error(`API Network Error [${requestId}]`, {
+        requestId,
+        endpoint,
+        error: error.message,
+      })
+      
+      throw new ApiError(
+        'Network error, please check your connection',
+        0,
+        'NETWORK_ERROR'
+      )
+    }
+    
+    // Log other errors
+    logger.error(`API Request Failed [${requestId}]`, {
+      requestId,
+      endpoint,
+      error: error.message,
+      stack: error.stack,
+    })
+    
+    // Rethrow as ApiError
+    throw new ApiError(
+      error.message || 'API request failed',
+      500,
+      'API_ERROR'
+    )
   }
 }
 

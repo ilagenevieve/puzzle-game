@@ -100,8 +100,26 @@ npm run lint
 npm run typecheck
 
 # Run all build checks
-./scripts/check-builds.sh
+npm run check
 ```
+
+### 🐞 Development with Enhanced Logging
+
+For local development with comprehensive error logging:
+
+```bash
+# Start with enhanced logging (outputs to terminal and log files)
+npm run dev:logs
+
+# Run checks first, then start with enhanced logging
+npm run dev:check
+```
+
+The enhanced development mode:
+- Starts both frontend and backend with proper error handling
+- Captures and highlights errors in real-time
+- Saves all logs to the `logs/` directory for later inspection
+- Provides color-coded output for easier debugging
 
 For more detailed setup instructions, check our [environment setup guide](docs/environment-setup.md).
 

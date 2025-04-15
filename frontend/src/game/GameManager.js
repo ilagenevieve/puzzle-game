@@ -1,10 +1,15 @@
 import Phaser from 'phaser';
 import { writable } from 'svelte/store';
 import gameStateManager from './GameStateManager';
+import logger from '../services/logger';
+import { GameError } from '../services/error-handler';
 
 // Import scenes
 import TestScene from './scenes/TestScene';
 import NimGame from './scenes/NimGame';
+
+// Create a game-specific logger
+const gameLogger = logger.child({ module: 'GameManager' });
 
 /**
  * GameManager class
@@ -39,23 +44,40 @@ class GameManager {
    */
   init(game, config = {}) {
     if (!game) {
-      this.updateState({ error: 'Game instance is required' });
+      const errorMessage = 'Game instance is required';
+      gameLogger.error(errorMessage);
+      this.updateState({ error: errorMessage });
       return false;
     }
+    
+    gameLogger.info('Initializing game manager', { config });
     
     this.game = game;
     this.config = config;
     
-    // Add all scenes
-    this.addScenes();
-    
-    // Update state
-    this.updateState({ 
-      initialized: true,
-      loading: false
-    });
-    
-    return true;
+    try {
+      // Add all scenes
+      this.addScenes();
+      
+      // Update state
+      this.updateState({ 
+        initialized: true,
+        loading: false
+      });
+      
+      gameLogger.info('Game manager initialized successfully');
+      return true;
+    } catch (error) {
+      const errorMessage = 'Failed to initialize game';
+      gameLogger.error(errorMessage, { error });
+      
+      this.updateState({ 
+        initialized: false,
+        error: errorMessage
+      });
+      
+      return false;
+    }
   }
   
   /**
@@ -84,13 +106,25 @@ class GameManager {
    */
   startScene(sceneName, data = {}) {
     if (!this.game) {
-      this.updateState({ error: 'Game not initialized' });
-      return;
+      const errorMessage = 'Game not initialized';
+      gameLogger.error(errorMessage);
+      this.updateState({ error: errorMessage });
+      throw new GameError(errorMessage, null, 'GAME_NOT_INITIALIZED');
     }
+    
+    if (!this.game.scene.getScene(sceneName)) {
+      const errorMessage = `Scene "${sceneName}" not found`;
+      gameLogger.error(errorMessage);
+      this.updateState({ error: errorMessage });
+      throw new GameError(errorMessage, null, 'SCENE_NOT_FOUND');
+    }
+    
+    gameLogger.info(`Starting scene: ${sceneName}`, { sceneName, data });
     
     // Stop all scenes first
     this.game.scene.scenes.forEach(scene => {
       if (scene.scene.isActive()) {
+        gameLogger.debug(`Stopping scene: ${scene.scene.key}`);
         scene.scene.stop();
       }
     });
@@ -107,12 +141,24 @@ class GameManager {
       
       // Update state after scene starts
       this.updateState({ loading: false });
+      gameLogger.info(`Scene started successfully: ${sceneName}`);
       
     } catch (error) {
-      console.error(`Error starting scene ${sceneName}:`, error);
+      const errorMessage = `Failed to start scene: ${error.message}`;
+      gameLogger.error(`Error starting scene ${sceneName}:`, { 
+        sceneName, 
+        error: error.message,
+        stack: error.stack
+      });
+      
       this.updateState({ 
-        error: `Failed to start scene: ${error.message}`,
+        error: errorMessage,
         loading: false
+      });
+      
+      throw new GameError(errorMessage, null, 'SCENE_START_ERROR', {
+        sceneName,
+        originalError: error.message
       });
     }
   }
