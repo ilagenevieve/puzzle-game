@@ -108,6 +108,9 @@ npm run check
 For local development with comprehensive error logging:
 
 ```bash
+# Interactive development menu with multiple options
+npm run start:dev
+
 # Start with enhanced logging (outputs to terminal and log files)
 npm run dev:logs
 
@@ -115,11 +118,19 @@ npm run dev:logs
 npm run dev:check
 ```
 
+The interactive development menu provides these options:
+1. Standard Mode - Simple concurrent development
+2. Enhanced Mode - With detailed logging and error tracking
+3. Check & Run - Run checks first, then start with enhanced logging
+4. Frontend Only - Run only the frontend
+5. Backend Only - Run only the backend
+
 The enhanced development mode:
 - Starts both frontend and backend with proper error handling
 - Captures and highlights errors in real-time
 - Saves all logs to the `logs/` directory for later inspection
 - Provides color-coded output for easier debugging
+- Robust error detection and detailed feedback
 
 For more detailed setup instructions, check our [environment setup guide](docs/environment-setup.md).
 

@@ -30,30 +30,133 @@ PROJECT_ROOT=$(pwd)
 # Create logs directory
 mkdir -p logs
 
-# Function to start a component
+# Check if node and npm are installed
+function check_prerequisites() {
+  print_status "blue" "Checking prerequisites..."
+  
+  if ! command -v node &> /dev/null; then
+    print_status "red" "❌ Node.js is not installed or not in PATH. Please install Node.js first."
+    exit 1
+  fi
+  
+  if ! command -v npm &> /dev/null; then
+    print_status "red" "❌ npm is not installed or not in PATH. Please install npm first."
+    exit 1
+  fi
+  
+  local node_version=$(node -v)
+  local npm_version=$(npm -v)
+  print_status "green" "✅ Found Node.js $node_version and npm $npm_version"
+
+  # Check if both package.json files exist
+  if [ ! -f "$PROJECT_ROOT/frontend/package.json" ]; then
+    print_status "red" "❌ Frontend package.json not found at $PROJECT_ROOT/frontend/package.json"
+    exit 1
+  fi
+
+  if [ ! -f "$PROJECT_ROOT/backend/package.json" ]; then
+    print_status "red" "❌ Backend package.json not found at $PROJECT_ROOT/backend/package.json"
+    exit 1
+  fi
+  
+  print_status "green" "✅ Project structure looks correct"
+}
+
+# Function to start a component with timeout and status check
 function start_component() {
   local name=$1
   local command=$2
+  local timeout=${3:-30}  # Default 30 seconds timeout
   local log_file="logs/${name}.log"
+  local error_file="logs/${name}_error.log"
+  local pid_file="logs/${name}.pid"
   
-  # Create or truncate log file
+  # Create or truncate log files
   > "$log_file"
+  > "$error_file"
   
   print_status "blue" "Starting $name..."
   print_status "yellow" "Logs will be saved to $log_file"
   
+  # Check if directory exists
+  if [ ! -d "$PROJECT_ROOT/$name" ]; then
+    print_status "red" "❌ $name directory not found at $PROJECT_ROOT/$name"
+    return 1
+  fi
+  
+  # Check if node_modules exists, if not install dependencies with a timeout
+  if [ ! -d "$PROJECT_ROOT/$name/node_modules" ]; then
+    print_status "yellow" "📦 Installing $name dependencies (this may take a moment)..."
+    (
+      cd "$PROJECT_ROOT/$name"
+      npm install --no-fund --no-audit > "$log_file" 2> "$error_file" || echo "NPM install failed" > "$error_file"
+    )
+    
+    # Check for errors in npm install
+    if [ -s "$error_file" ]; then
+      print_status "red" "❌ Failed to install $name dependencies. See $error_file for details."
+      cat "$error_file"
+      return 1
+    fi
+    
+    print_status "green" "✅ $name dependencies installed successfully"
+  fi
+  
   # Start component in background and tee to log file
   (
     cd "$PROJECT_ROOT/$name"
-    npm install --no-fund --no-audit &> /dev/null
     eval "$command" 2>&1 | tee -a "$log_file" &
+    echo $! > "$pid_file"
   )
   
-  # Add the most recent background job to the list
-  if [[ "${COMPONENT_PIDS[*]}" ]]; then
-    COMPONENT_PIDS+=($!)
+  # Get the PID
+  if [ -f "$pid_file" ]; then
+    local pid=$(cat "$pid_file")
+    if [[ "${COMPONENT_PIDS[*]}" ]]; then
+      COMPONENT_PIDS+=($pid)
+    else
+      COMPONENT_PIDS=($pid)
+    fi
   else
-    COMPONENT_PIDS=($!)
+    print_status "red" "❌ Failed to get PID for $name"
+    return 1
+  fi
+  
+  # Wait for startup indications with timeout
+  print_status "yellow" "Waiting for $name to start (timeout: ${timeout}s)..."
+  
+  local start_time=$(date +%s)
+  local current_time=$(date +%s)
+  local success=false
+  
+  while (( current_time - start_time < timeout )); do
+    if [ "$name" = "backend" ] && grep -q "Server running" "$log_file"; then
+      success=true
+      break
+    elif [ "$name" = "frontend" ] && grep -q "Local:" "$log_file"; then
+      success=true
+      break
+    fi
+    
+    # Check for common errors
+    if grep -q "Error:" "$log_file" || grep -q "ERR!" "$log_file"; then
+      print_status "red" "❌ Error detected while starting $name:"
+      grep -E "Error:|ERR!" "$log_file" | head -n 3
+      return 1
+    fi
+    
+    sleep 1
+    current_time=$(date +%s)
+  done
+  
+  if [ "$success" = true ]; then
+    print_status "green" "✅ $name started successfully!"
+    return 0
+  else
+    print_status "red" "❌ Timeout waiting for $name to start. Check $log_file for details."
+    print_status "yellow" "Last 10 lines of log:"
+    tail -n 10 "$log_file"
+    return 1
   fi
 }
 
@@ -120,35 +223,61 @@ print_status "magenta" "
 =================================================
 "
 
-# Start backend
-start_component "backend" "NODE_ENV=development npm run dev"
+# Check prerequisites
+check_prerequisites
+print_status "blue" "Starting development environment..."
 
-# Wait a moment to let backend initialize
-sleep 2
+# Initialize a flag to track if everything starts correctly
+ALL_STARTED=true
 
-# Start frontend
-start_component "frontend" "npm run dev"
+# Start backend with a timeout of 30 seconds
+if ! start_component "backend" "NODE_ENV=development npm run dev" 30; then
+  print_status "red" "❌ Failed to start backend component."
+  ALL_STARTED=false
+else
+  # Get backend port from config or default to 4000
+  BACKEND_PORT=4000
+  if grep -q "PORT" "$PROJECT_ROOT/backend/.env" 2>/dev/null; then
+    BACKEND_PORT=$(grep "PORT" "$PROJECT_ROOT/backend/.env" | cut -d'=' -f2)
+  fi
+  print_status "green" "✅ Backend started at http://localhost:$BACKEND_PORT"
+fi
 
-# Wait a moment for processes to start and logs to be created
-sleep 3
+# Only start frontend if backend started
+if [ "$ALL_STARTED" = true ]; then
+  # Start frontend with a timeout of 60 seconds (Vite can take longer)
+  if ! start_component "frontend" "npm run dev" 60; then
+    print_status "red" "❌ Failed to start frontend component."
+    ALL_STARTED=false
+  else
+    # Get frontend port from config or default to 3000
+    FRONTEND_PORT=3000
+    if grep -q "FRONTEND_PORT" "$PROJECT_ROOT/frontend/.env" 2>/dev/null; then
+      FRONTEND_PORT=$(grep "FRONTEND_PORT" "$PROJECT_ROOT/frontend/.env" | cut -d'=' -f2)
+    fi
+    print_status "green" "✅ Frontend started at http://localhost:$FRONTEND_PORT"
+  fi
+fi
 
-# Display active components
-print_status "green" "All components started successfully!"
-print_status "blue" "
+# Only proceed if all components started
+if [ "$ALL_STARTED" = true ]; then
+  # Display active components
+  print_status "green" "✅ All components started successfully!"
+  print_status "blue" "
 =================================================
    🌊 Active Components:
-   - Backend: http://localhost:4000
-   - Frontend: http://localhost:3000
+   - Backend: http://localhost:$BACKEND_PORT
+   - Frontend: http://localhost:$FRONTEND_PORT
 =================================================
 "
 
-# Start monitoring logs for errors
-print_status "yellow" "Monitoring logs for errors..."
-monitor_logs "backend"
-monitor_logs "frontend"
+  # Start monitoring logs for errors
+  print_status "yellow" "📊 Monitoring logs for errors..."
+  monitor_logs "backend"
+  monitor_logs "frontend"
 
-# Display error log information
-print_status "yellow" "
+  # Display error log information
+  print_status "yellow" "
 =================================================
    📝 Full logs are available in the logs directory:
    - Backend: logs/backend.log
@@ -156,7 +285,17 @@ print_status "yellow" "
 =================================================
 "
 
-print_status "cyan" "Press Ctrl+C to shut down all components."
+  print_status "cyan" "👉 Press Ctrl+C to shut down all components."
 
-# Wait for all component processes to finish
-wait ${COMPONENT_PIDS[@]}
+  # Wait for all component processes to finish
+  wait ${COMPONENT_PIDS[@]}
+else
+  print_status "red" "
+=================================================
+   ❌ Failed to start all components
+   Please check the logs for more information
+=================================================
+"
+  cleanup
+  exit 1
+fi
