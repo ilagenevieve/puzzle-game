@@ -24,8 +24,13 @@ Our project follows a simplified branch structure optimized for solo development
 - **This is the main working branch for development**
 - **Contains the latest development code**
 - **This is what you're testing when running `npm run start:dev`**
-- Direct pushes allowed for solo developer
+- Direct pushes should be allowed for solo developer
 - Should be reasonably stable but may contain work-in-progress features
+
+> **Important Note for Solo Developers:**
+> GitHub may have repository-wide rules requiring pull requests that override our branch settings.
+> To disable this for the develop branch, navigate to:
+> GitHub → Repository → Settings → Rules → Edit the rule requiring PRs → Exclude the develop branch
 
 ## Working with Temporary Branches
 
