@@ -7,9 +7,8 @@ This is a quick reference guide for the Ocean of Puzzles development workflow, o
 ### 1. Start Work on a New Feature
 
 ```bash
-# Make sure develop is up to date
-git checkout develop
-git pull origin develop
+# Sync your branches with remote (fetch, prune, pull develop and main)
+npm run branches:sync
 
 # Create a feature branch
 git checkout -b feature/my-new-feature
@@ -42,9 +41,11 @@ git merge feature/my-new-feature
 # Push directly to develop (no PR needed)
 git push origin develop
 
-# Clean up feature branch
-git branch -d feature/my-new-feature
-git push origin --delete feature/my-new-feature
+# Clean up feature branch (choose one method)
+npm run branches:clean-local  # Quick cleanup of all merged branches
+# OR
+git branch -d feature/my-new-feature  # Delete specific branch
+git push origin --delete feature/my-new-feature  # Delete from remote
 ```
 
 ### 2b. Alternative: Complete with Pull Request (Optional for Tracking)
@@ -224,20 +225,37 @@ gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
 5. **Branch Protection**: Main branch is protected; develop branch is semi-protected
 6. **Branch Management**: Use `npm run branches:cleanup` to prevent branch overflow
 
-## Branch Cleanup
+## Branch Management
 
-To keep your repository clean and avoid branch overflow:
+To keep your repository clean and avoid branch overflow, we provide several convenient branch management tools:
 
 ```bash
-# Run the ocean-themed branch cleanup utility
+# Interactive ocean-themed branch cleanup utility
 npm run branches:cleanup
+
+# Quick cleanup of local merged branches
+npm run branches:clean-local
+
+# Sync local branches with remote (fetch, prune, pull develop and main)
+npm run branches:sync
 ```
 
-This interactive utility will:
+The interactive cleanup utility (`branches:cleanup`) will:
 - Identify branches that have been merged into develop
 - Detect stale branches (inactive for 60+ days)
 - Offer to clean up both local and remote branches
 - Provide ocean-themed visual feedback throughout the process
+
+The quick cleanup tool (`branches:clean-local`) will:
+- Find all branches that have been merged into develop
+- Safely delete them locally (preserving main and develop)
+- Run much faster without needing interactive input
+
+The sync tool (`branches:sync`) will:
+- Fetch the latest changes from the remote repository
+- Prune references to deleted remote branches
+- Pull the latest develop and main branches
+- Return you to the develop branch when finished
 
 For more detailed information on our Git workflow, branch protection rules, and branch management, see:
 - [Git Workflow](dev-workflow/git-workflow.md)

@@ -351,7 +351,24 @@ cd backend
 node -e "require('./src/db/init.js')()"
 ```
 
-4. **WebRTC Connection Issues**
+4. **Git Branch Issues**
+
+If you encounter issues with branch management, our repository includes helpful tools:
+
+```bash
+# Sync your branches with remote
+npm run branches:sync
+
+# Clean up merged branches
+npm run branches:clean-local
+
+# Interactive branch cleanup with ocean-themed UI
+npm run branches:cleanup
+```
+
+For more details, see the [Branch Management Guide](dev-workflow/branch-management.md).
+
+5. **WebRTC Connection Issues**
 
 If players cannot connect via WebRTC, ensure:
 - STUN server is accessible

@@ -196,11 +196,20 @@ See the [documentation index](docs/README.md) for the complete structure.
 
 We welcome contributions! Please check our [contribution guidelines](docs/dev-workflow/git-workflow.md) and [branch management guide](docs/dev-workflow/branch-management.md) before getting started.
 
-To keep the repository clean, we provide a helpful branch cleanup utility:
+To keep the repository clean, we provide several helpful branch management tools:
+
 ```bash
-# Clean up merged and stale branches
+# Interactive ocean-themed branch cleanup utility
 npm run branches:cleanup
+
+# Quick cleanup of local merged branches
+npm run branches:clean-local
+
+# Sync local branches with remote (fetch, prune, pull develop and main)
+npm run branches:sync
 ```
+
+These tools help maintain a clean repository and streamline the solo developer workflow.
 
 ## 🏖️ Join Our Ocean Adventure
 
