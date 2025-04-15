@@ -292,7 +292,13 @@ if [ "$ALL_STARTED" = true ]; then
 EOF
   print_status "blue" "   🌊 Active Components:"
   print_status "blue" "   🐚 Backend: http://localhost:$BACKEND_PORT"
-  print_status "blue" "   🐙 Frontend: http://localhost:$FRONTEND_PORT" 
+  # Account for case where Vite found a different port
+  if grep -q "Local:" "$PROJECT_ROOT/logs/frontend.log"; then
+    ACTUAL_FRONTEND_URL=$(grep "Local:" "$PROJECT_ROOT/logs/frontend.log" | tail -n 1 | sed 's/.*Local://g' | sed 's/ //g')
+    print_status "blue" "   🐙 Frontend: $ACTUAL_FRONTEND_URL" 
+  else
+    print_status "blue" "   🐙 Frontend: http://localhost:$FRONTEND_PORT" 
+  fi
   
   cat << EOF | sed 's/\\n/\n/g' | while read -r line; do print_status "blue" "$line"; done
   ~^~^~^~^~^~^~^~^~^~^~^~^~
