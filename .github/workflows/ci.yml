@@ -78,6 +78,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: |
+          **/package-lock.json
     
     - name: Project Structure Check
       id: structure-check
@@ -129,7 +131,11 @@ jobs:
       if: steps.structure-check.outputs.has_root == 'true'
       run: |
         echo "🌊 Installing root dependencies..."
-        npm ci || npm install
+        if [ -f "package-lock.json" ]; then
+          npm ci
+        else
+          npm install
+        fi
       continue-on-error: true
       
     - name: Install Frontend Dependencies
@@ -137,7 +143,11 @@ jobs:
       working-directory: ./frontend
       run: |
         echo "🏄‍♂️ Installing frontend dependencies..."
-        npm ci || npm install
+        if [ -f "package-lock.json" ]; then
+          npm ci
+        else
+          npm install
+        fi
       continue-on-error: true
       
     - name: Install Backend Dependencies
@@ -145,7 +155,11 @@ jobs:
       working-directory: ./backend
       run: |
         echo "🐠 Installing backend dependencies..."
-        npm ci || npm install
+        if [ -f "package-lock.json" ]; then
+          npm ci
+        else
+          npm install
+        fi
         
         # Check for nodemon and install globally if needed
         if ! npm list -g nodemon &> /dev/null; then
