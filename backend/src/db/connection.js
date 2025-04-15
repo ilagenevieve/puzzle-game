@@ -14,15 +14,18 @@ if (!fs.existsSync(dbDir)) {
 // Initialize database connection
 let db
 try {
-  db = new SQLite(config.db.path, { verbose: config.isDevelopment ? logger.debug : null })
+  db = new SQLite(config.db.path, { 
+    // In newer better-sqlite3 versions, verbose needs to be a function, not a method reference
+    verbose: config.isDevelopment ? (message) => logger.debug(message) : null 
+  })
   logger.info(`Connected to SQLite database at ${config.db.path}`)
-  
+
   // Enable foreign keys
   db.pragma('foreign_keys = ON')
-  
+
   // Set busy timeout to avoid locks
   db.pragma('busy_timeout = 5000')
-  
+
   // Optimize for performance
   if (!config.isDevelopment) {
     db.pragma('journal_mode = WAL')
@@ -61,7 +64,7 @@ const getAll = (sql, params = []) => {
   }
 }
 
-const transaction = (fn) => {
+const transaction = fn => {
   const transactionFn = db.transaction(fn)
   try {
     return transactionFn()
@@ -76,5 +79,5 @@ module.exports = {
   run: runQuery,
   get: getOne,
   all: getAll,
-  transaction,
+  transaction
 }
