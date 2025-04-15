@@ -15,15 +15,15 @@ export default defineConfig({
     port: process.env.FRONTEND_PORT || 3000,
     proxy: {
       '/api': {
-        target: `http://backend:${process.env.PORT || 4000}`,
+        target: `http://localhost:${process.env.PORT || 4000}`,
         changeOrigin: true
       },
       '/socket.io': {
-        target: `http://backend:${process.env.PORT || 4000}`,
+        target: `http://localhost:${process.env.PORT || 4000}`,
         ws: true
       },
       '/peerjs': {
-        target: `http://backend:${process.env.PEERJS_PORT || 9000}`,
+        target: `http://localhost:${process.env.PEERJS_PORT || 9000}`,
         ws: true
       }
     }
