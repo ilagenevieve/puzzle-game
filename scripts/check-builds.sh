@@ -46,6 +46,32 @@ function run_step() {
   fi
 }
 
+# Function to check Node.js version compatibility
+function check_node_version() {
+  if ! command -v node &> /dev/null; then
+    print_status "red" "❌ Node.js not found. Please install Node.js first."
+    return 1
+  fi
+  
+  local node_version=$(node -v)
+  local node_major_version=$(echo $node_version | cut -d. -f1 | tr -d 'v')
+  
+  print_status "blue" "🔍 Checking Node.js version compatibility..."
+  print_status "green" "✅ Found Node.js $node_version"
+  
+  if [ "$node_major_version" -gt "20" ]; then
+    print_status "yellow" "⚠️ You are using Node.js $node_version, but better-sqlite3 may have compatibility issues with Node.js newer than v20."
+    print_status "yellow" "⚠️ For best results, consider using Node.js LTS (v20.x)."
+    print_status "yellow" "⚠️ You can use nvm (Node Version Manager) to switch versions:"
+    print_status "yellow" "   nvm install 20"
+    print_status "yellow" "   nvm use 20"
+    
+    print_status "yellow" "⚠️ Continuing with checks, but you may encounter compilation issues with certain dependencies."
+  fi
+  
+  return 0
+}
+
 # Function to check and install dependencies if needed
 function check_dependencies() {
   local component=$1
@@ -187,6 +213,9 @@ print_status "blue" "
      🌊 Ocean of Puzzles - Quality Check System
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
+
+# Check Node.js version compatibility
+check_node_version
 
 # Track overall success
 FRONTEND_SUCCESS=false

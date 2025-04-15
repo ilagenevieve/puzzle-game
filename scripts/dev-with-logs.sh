@@ -46,9 +46,30 @@ function check_prerequisites() {
   fi
   
   local node_version=$(node -v)
+  local node_major_version=$(echo $node_version | cut -d. -f1 | tr -d 'v')
   local npm_version=$(npm -v)
   print_status "green" "✅ Found Node.js $node_version and npm $npm_version"
-
+  
+  # Check Node.js version compatibility
+  if [ "$node_major_version" -gt "20" ]; then
+    print_status "yellow" "⚠️ You are using Node.js $node_version, but better-sqlite3 may have compatibility issues with Node.js newer than v20."
+    print_status "yellow" "⚠️ If you encounter 'better-sqlite3' compilation errors, please consider using Node.js LTS (v20.x)."
+    print_status "yellow" "⚠️ You can use nvm (Node Version Manager) to switch versions:"
+    print_status "yellow" "   nvm install 20"
+    print_status "yellow" "   nvm use 20"
+    
+    # Ask if the user wants to continue anyway
+    print_status "blue" "Would you like to continue anyway? (y/n)"
+    read -p "🐙 Your choice: " choice
+    
+    if [[ ! "$choice" =~ ^[Yy]$ ]]; then
+      print_status "cyan" "🌊 No worries! Please switch to Node.js v20 and try again."
+      exit 0
+    fi
+    
+    print_status "cyan" "🌊 Continuing with Node.js $node_version, but you may encounter issues..."
+  fi
+  
   # Check if both package.json files exist
   if [ ! -f "$PROJECT_ROOT/frontend/package.json" ]; then
     print_status "red" "❌ Frontend package.json not found at $PROJECT_ROOT/frontend/package.json"
