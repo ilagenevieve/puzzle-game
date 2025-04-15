@@ -12,7 +12,7 @@ Before you begin, ensure you have the following installed:
 - Docker Compose
 - Git
 
-> **Note about Node.js versions**: The project is designed to work with Node.js LTS versions (v18 or v20). Some dependencies (particularly `better-sqlite3`) may have compilation issues with newer Node.js versions like v22+. For the best experience, we recommend using Node.js v20 LTS.
+> **Note about Node.js versions**: The project supports all modern Node.js versions (v18+). We use the latest package versions to ensure optimal compatibility. For production deployments, Node.js LTS versions are generally recommended.
 
 ## Development Environment
 

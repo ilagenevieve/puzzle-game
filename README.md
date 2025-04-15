@@ -48,7 +48,7 @@ Our puzzle ocean is built upon a carefully selected reef of technologies:
 - **Authentication**: Session-based with secure HTTP-only cookies
 - **Styling**: SCSS with ocean-themed variables and responsive design
 
-> **Node.js Compatibility**: We recommend Node.js v18 or v20 LTS for the best experience. Some dependencies (particularly better-sqlite3) may have compatibility issues with Node.js v22+. Our development scripts will notify you if you're using a potentially incompatible Node.js version.
+> **Node.js Compatibility**: We support all modern Node.js versions (v18, v20, v22+). The project uses the latest package versions for optimal compatibility and features.
 
 ## 🏝️ Setting Sail (Setup)
 
