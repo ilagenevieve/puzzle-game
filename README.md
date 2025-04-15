@@ -205,6 +205,9 @@ npm run branches:cleanup
 # Quick cleanup of local merged branches
 npm run branches:clean-local
 
+# Interactive cleanup of remote branches
+npm run branches:clean-remote
+
 # Sync local branches with remote (fetch, prune, pull develop and main)
 npm run branches:sync
 ```
