@@ -1,16 +1,21 @@
 # GitHub Repository Configuration
 
-This document outlines the configuration steps taken for the Ocean of Puzzles GitHub repository.
+This document outlines the configuration steps taken for the Ocean of Puzzles GitHub repository, optimized for a single-developer workflow.
 
 ## Branch Protection Rulesets
 
-Five branch protection rulesets have been configured:
+Five branch protection rulesets have been configured with relaxed settings appropriate for solo development:
 
-1. **Main Branch Protection** (Strictest)
-2. **Develop Branch Protection** (Strict)
+1. **Main Branch Protection** (Relaxed)
+2. **Develop Branch Protection** (Relaxed)
 3. **Feature Branches** (Flexible)
 4. **Bugfix Branches** (Flexible)
-5. **Release Branches** (Moderately Strict)
+5. **Release Branches** (Relaxed)
+
+These rulesets maintain structural integrity while removing unnecessary friction for a solo developer. The primary protections are:
+- Pull requests are required for main and develop branches
+- Force pushes are blocked
+- Branch deletion is restricted for important branches
 
 See the [Git Workflow](dev-workflow/git-workflow.md) document for specific settings details.
 

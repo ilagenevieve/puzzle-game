@@ -40,7 +40,7 @@ Examples:
 - `docs/api-documentation`
 - `refactor/game-engine-optimization`
 
-## Workflow Process
+## Workflow Process for Single Developer
 
 ### Feature Development
 
@@ -51,15 +51,15 @@ Examples:
    git checkout -b feature/my-feature
    ```
 
-2. **Develop and Commit**: Work on your feature, making regular commits
+2. **Develop and Commit**: Work on your feature, making regular commits using conventional commits format
    ```bash
    git add .
-   git commit -m "Add feature XYZ"
+   git commit -m "feat: add feature XYZ"
    ```
 
-3. **Push to Remote**: Push your branch to share or backup your work
+3. **Push to Remote**: Push your branch to backup your work
    ```bash
-   git push origin feature/my-feature
+   git push -u origin feature/my-feature
    ```
 
 4. **Keep Updated**: Regularly update your branch with changes from `develop`
@@ -70,26 +70,45 @@ Examples:
    git merge develop
    ```
 
-5. **Create Pull Request**: When the feature is complete, create a pull request to merge into `develop`
-
-6. **Code Review**: Request review from at least one team member
-
-7. **Merge**: After approval, merge into `develop` using a merge commit
+5. **Create Pull Request**: When the feature is complete, use the GitHub CLI to create a pull request
    ```bash
-   git checkout develop
-   git merge --no-ff feature/my-feature
-   git push origin develop
+   gh pr create --title "feat: add my feature" --body "Description of the feature" --base develop
    ```
 
-8. **Clean Up**: Delete the feature branch after successful merge
+6. **Merge**: Merge the PR using the GitHub CLI or web interface
    ```bash
+   gh pr merge <PR-NUMBER> --merge
+   ```
+
+7. **Clean Up**: Delete the feature branch after successful merge
+   ```bash
+   git checkout develop
+   git pull origin develop
    git branch -d feature/my-feature
    git push origin --delete feature/my-feature
    ```
 
-### Bug Fixes
+### Documentation Changes
 
-Follow the same process as features, but use `bugfix/` prefix for branch names.
+For documentation-only changes, we can use a streamlined approach:
+
+1. **Create Documentation Branch**:
+   ```bash
+   git checkout develop
+   git checkout -b docs/update-docs
+   ```
+
+2. **Make Changes and Commit**:
+   ```bash
+   git add .
+   git commit -m "docs: update documentation"
+   ```
+
+3. **Create and Merge PR**:
+   ```bash
+   gh pr create --title "docs: update documentation" --body "Updated documentation" --base develop
+   gh pr merge <PR-NUMBER> --merge
+   ```
 
 ### Release Process
 
@@ -104,30 +123,34 @@ Follow the same process as features, but use `bugfix/` prefix for branch names.
    ```bash
    # Update version in package.json, etc.
    git add .
-   git commit -m "Bump version to 1.0.0"
+   git commit -m "chore: bump version to 1.0.0"
    ```
 
-3. **Merge to Main**: When ready to release, merge to `main` with a version tag
+3. **Create PR to Main**:
+   ```bash
+   gh pr create --title "chore: release v1.0.0" --body "Release version 1.0.0" --base main
+   gh pr merge <PR-NUMBER> --merge
+   ```
+
+4. **Tag the Release**:
    ```bash
    git checkout main
    git pull origin main
-   git merge --no-ff release/v1.0.0
    git tag -a v1.0.0 -m "Version 1.0.0"
-   git push origin main --tags
+   git push origin v1.0.0
    ```
 
-4. **Merge Back to Develop**: Ensure any release fixes get back to `develop`
+5. **Create GitHub Release** (optional):
+   ```bash
+   gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
+   ```
+
+6. **Merge Back to Develop**:
    ```bash
    git checkout develop
    git pull origin develop
-   git merge --no-ff release/v1.0.0
-   git push origin develop
-   ```
-
-5. **Clean Up**: Delete the release branch
-   ```bash
-   git branch -d release/v1.0.0
-   git push origin --delete release/v1.0.0
+   gh pr create --title "chore: merge release v1.0.0 back to develop" --body "Sync develop with release" --base develop --head main
+   gh pr merge <PR-NUMBER> --merge
    ```
 
 ### Hotfix Process
@@ -142,30 +165,29 @@ Follow the same process as features, but use `bugfix/` prefix for branch names.
 2. **Fix and Commit**: Make necessary fixes
    ```bash
    git add .
-   git commit -m "Fix critical issue XYZ"
+   git commit -m "fix: critical issue XYZ"
    ```
 
-3. **Merge to Main**: Apply fix to production
+3. **Create PR to Main**:
+   ```bash
+   gh pr create --title "fix: critical issue XYZ" --body "Fixes critical issue" --base main
+   gh pr merge <PR-NUMBER> --merge
+   ```
+
+4. **Tag the Hotfix**:
    ```bash
    git checkout main
    git pull origin main
-   git merge --no-ff hotfix/critical-fix
    git tag -a v1.0.1 -m "Hotfix 1.0.1"
-   git push origin main --tags
+   git push origin v1.0.1
    ```
 
-4. **Merge to Develop**: Ensure fix is also in development
+5. **Merge to Develop**:
    ```bash
    git checkout develop
    git pull origin develop
-   git merge --no-ff hotfix/critical-fix
-   git push origin develop
-   ```
-
-5. **Clean Up**: Delete the hotfix branch
-   ```bash
-   git branch -d hotfix/critical-fix
-   git push origin --delete hotfix/critical-fix
+   gh pr create --title "fix: merge hotfix back to develop" --body "Sync develop with hotfix" --base develop --head main
+   gh pr merge <PR-NUMBER> --merge
    ```
 
 ## Commit Guidelines
@@ -212,7 +234,7 @@ due to improper validation
 - Limit line length to 72 characters in commit message body
 - Use bullet points (asterisks or hyphens) for multiple changes
 
-## Pull Request Guidelines
+## Pull Request Guidelines for Single Developer
 
 ### PR Title Format
 
@@ -220,45 +242,52 @@ due to improper validation
 <type>: <subject>
 ```
 
-Using the same types as commit messages.
+Using the same types as commit messages (feat, fix, docs, etc.).
 
 ### PR Description Template
+
+We use a simple PR template stored in `.github/pull_request_template.md`:
 
 ```
 ## Description
 Brief description of the changes.
 
-## Changes
-- Change 1
-- Change 2
+## Type of change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Enhancement to existing feature
+- [ ] Documentation update
+- [ ] Code refactoring
 
-## Testing
-How were the changes tested?
+## How Has This Been Tested?
+Brief description of testing approach.
 
-## Screenshots
-(if applicable)
+## Screenshots (if appropriate)
 
-## Related Issues
-Fixes #123
+## Checklist
+- [ ] My code follows the style guidelines of this project
+- [ ] I have performed a self-review of my own code
+- [ ] I have added tests where applicable
 ```
 
-### PR Best Practices
+### PR Best Practices for Solo Development
 
 - Keep PRs focused on a single feature or bug fix
-- Ensure all tests pass before requesting review
-- Include relevant tests for new features or bug fixes
-- Request review from appropriate team members
+- Use the GitHub CLI (`gh pr create`) for creating PRs efficiently
+- Include appropriate tests for new features or bug fixes
+- Use the PR checklist to ensure quality standards
 - Link related issues in the PR description
 - Squash commits if there are many small, related changes
 
-## Code Review Guidelines
+### Self-Review Guidelines
 
-- Reviewers should respond within 24 hours
-- Focus on code quality, not style preferences (we have linters for that)
-- Be constructive and respectful in comments
-- Approve only if you understand the changes
-- Suggest improvements rather than just pointing out issues
-- Consider both what's present and what's missing
+As a solo developer, it's important to conduct thorough self-reviews:
+
+- Take a break before reviewing your own code to gain perspective
+- Read through the code changes line by line in the GitHub interface
+- Run tests and verify functionality before merging
+- Use the checklist in the PR template to ensure you've covered all bases
+- Document any decisions or trade-offs made in the PR description
 
 ## Using Tags
 
@@ -317,55 +346,50 @@ This approach should only be used for documentation changes, simple bug fixes, o
 
 ## Branch Protection Rules
 
-We have implemented the following branch protection rulesets in GitHub to enforce our workflow:
+We have implemented branch protection rules designed for a single-developer workflow while still maintaining code quality and good practices.
 
-### 1. Main Branch Protection (Strictest)
+### 1. Main Branch Protection (Relaxed)
 
 - **Target:** `main` branch
 - **Requirements:**
   - Pull request required before merging
-  - At least 1 approval needed
-  - Status checks must pass (`lint-and-test (18.x)`)
-  - Branches must be up-to-date before merging
   - Force pushes blocked
   - Branch deletion restricted
-  - Linear history required
+  - No required approvals (since we're a single developer)
+  - No required status checks (reducing friction)
 
-### 2. Develop Branch Protection (Strict)
+### 2. Develop Branch Protection (Relaxed)
 
 - **Target:** `develop` branch
 - **Requirements:**
   - Pull request required before merging
-  - At least 1 approval needed
-  - Status checks must pass (`lint-and-test (18.x)`)
-  - Branches must be up-to-date before merging
   - Force pushes blocked
   - Branch deletion restricted
+  - No required approvals (since we're a single developer)
+  - No required status checks (reducing friction)
 
 ### 3. Feature Branches Ruleset (Flexible)
 
 - **Target:** All `feature/*` branches
 - **Requirements:**
-  - Status checks must pass (`lint-and-test (18.x)`)
   - Force pushes blocked
-  - More flexible to allow active development
+  - Flexible to allow active development
 
 ### 4. Bugfix Branches Ruleset (Flexible)
 
 - **Target:** All `bugfix/*` branches
 - **Requirements:**
-  - Status checks must pass (`lint-and-test (18.x)`)
   - Force pushes blocked
   - Similar flexibility to feature branches
 
-### 5. Release Branches Ruleset (Moderately Strict)
+### 5. Release Branches Ruleset (Relaxed)
 
 - **Target:** All `release/*` branches
 - **Requirements:**
-  - Status checks must pass (`lint-and-test (18.x)`)
-  - Branches must be up-to-date before merging
   - Force pushes blocked
   - Branch deletion restricted
+
+This relaxed configuration still maintains the overall structure but removes barriers that might slow down a solo developer's workflow.
 
 ## Best Practices Summary
 
