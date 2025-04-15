@@ -222,7 +222,24 @@ gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
 3. **CI/CD**: Automated testing happens on all branches but doesn't block develop
 4. **Local Testing**: Use `npm run check` and `npm run dev:logs` for quality assurance
 5. **Branch Protection**: Main branch is protected; develop branch is semi-protected
+6. **Branch Management**: Use `npm run branches:cleanup` to prevent branch overflow
 
-For more detailed information on our Git workflow, branch protection rules, and GitHub configuration, see:
+## Branch Cleanup
+
+To keep your repository clean and avoid branch overflow:
+
+```bash
+# Run the ocean-themed branch cleanup utility
+npm run branches:cleanup
+```
+
+This interactive utility will:
+- Identify branches that have been merged into develop
+- Detect stale branches (inactive for 60+ days)
+- Offer to clean up both local and remote branches
+- Provide ocean-themed visual feedback throughout the process
+
+For more detailed information on our Git workflow, branch protection rules, and branch management, see:
 - [Git Workflow](dev-workflow/git-workflow.md)
+- [Branch Management](dev-workflow/branch-management.md)
 - [GitHub Configuration](github-configuration.md)
