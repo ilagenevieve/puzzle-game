@@ -1,0 +1,48 @@
+{
+  "name": "ocean-puzzles-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Backend for Ocean of Puzzles game",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon --watch src src/app.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "test:e2e": "jest tests/e2e",
+    "lint": "eslint --ext .js .",
+    "lint:fix": "eslint --ext .js . --fix"
+  },
+  "dependencies": {
+    "bcrypt": "5.1.1",
+    "better-sqlite3": "9.2.2",
+    "compression": "1.7.4",
+    "connect-sqlite3": "0.9.13",
+    "cors": "2.8.5",
+    "dotenv": "16.3.1",
+    "express": "4.18.2",
+    "express-session": "1.17.3",
+    "express-validator": "7.0.1",
+    "helmet": "7.1.0",
+    "morgan": "1.10.0",
+    "peer": "1.0.1",
+    "pino": "8.16.2",
+    "pino-http": "8.5.1",
+    "pino-pretty": "10.2.3",
+    "socket.io": "4.7.2"
+  },
+  "devDependencies": {
+    "eslint": "8.55.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.29.0",
+    "jest": "29.7.0",
+    "nodemon": "3.0.1",
+    "supertest": "6.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
