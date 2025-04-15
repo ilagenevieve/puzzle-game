@@ -315,6 +315,58 @@ For smaller changes or quicker iterations, we may occasionally use a simplified 
 
 This approach should only be used for documentation changes, simple bug fixes, or when explicitly agreed upon by the team.
 
+## Branch Protection Rules
+
+We have implemented the following branch protection rulesets in GitHub to enforce our workflow:
+
+### 1. Main Branch Protection (Strictest)
+
+- **Target:** `main` branch
+- **Requirements:**
+  - Pull request required before merging
+  - At least 1 approval needed
+  - Status checks must pass (`lint-and-test (18.x)`)
+  - Branches must be up-to-date before merging
+  - Force pushes blocked
+  - Branch deletion restricted
+  - Linear history required
+
+### 2. Develop Branch Protection (Strict)
+
+- **Target:** `develop` branch
+- **Requirements:**
+  - Pull request required before merging
+  - At least 1 approval needed
+  - Status checks must pass (`lint-and-test (18.x)`)
+  - Branches must be up-to-date before merging
+  - Force pushes blocked
+  - Branch deletion restricted
+
+### 3. Feature Branches Ruleset (Flexible)
+
+- **Target:** All `feature/*` branches
+- **Requirements:**
+  - Status checks must pass (`lint-and-test (18.x)`)
+  - Force pushes blocked
+  - More flexible to allow active development
+
+### 4. Bugfix Branches Ruleset (Flexible)
+
+- **Target:** All `bugfix/*` branches
+- **Requirements:**
+  - Status checks must pass (`lint-and-test (18.x)`)
+  - Force pushes blocked
+  - Similar flexibility to feature branches
+
+### 5. Release Branches Ruleset (Moderately Strict)
+
+- **Target:** All `release/*` branches
+- **Requirements:**
+  - Status checks must pass (`lint-and-test (18.x)`)
+  - Branches must be up-to-date before merging
+  - Force pushes blocked
+  - Branch deletion restricted
+
 ## Best Practices Summary
 
 - Keep branches short-lived
