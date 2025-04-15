@@ -17,10 +17,11 @@ Ocean of Puzzles is currently under active development:
 - ✅ **Phase 3: Frontend Framework & UI** - Complete
 - ✅ **Phase 4: Game Engine Integration** - Complete
 - 🔄 **Phase 5: Game Implementations** - In Progress (20%)
-- 🔄 **Phase 6: Development Workflow** - In Progress (80%)
+- 🔄 **Phase 6: Development Workflow** - In Progress (90%)
   - ✅ Ocean-themed development scripts
   - ✅ Branch management tools
   - ✅ Solo developer CI/CD workflow
+  - ✅ Node.js version compatibility checks
 - 📅 **Phases 7-9** - Planned
 
 See our [implementation status](IMPLEMENTATION_STATUS.md) document for a detailed breakdown of progress.
@@ -46,6 +47,8 @@ Our puzzle ocean is built upon a carefully selected reef of technologies:
 - **Multiplayer**: PeerJS (WebRTC) for direct gameplay, Socket.io for signaling (connecting players across the vast ocean)
 - **Authentication**: Session-based with secure HTTP-only cookies
 - **Styling**: SCSS with ocean-themed variables and responsive design
+
+> **Node.js Compatibility**: We recommend Node.js v18 or v20 LTS for the best experience. Some dependencies (particularly better-sqlite3) may have compatibility issues with Node.js v22+. Our development scripts will notify you if you're using a potentially incompatible Node.js version.
 
 ## 🏝️ Setting Sail (Setup)
 
@@ -181,6 +184,7 @@ Our journey across the puzzle ocean follows these currents:
    - Ocean-themed development scripts ✅
    - Branch management utilities ✅
    - Optimized CI/CD for solo development ✅
+   - Node.js version compatibility checks ✅
 7. **Multiplayer Ocean**: P2P connections for 1v1 gameplay
 8. **AI Islands**: Intelligent computer opponents
 9. **Polish Lagoon**: Animations, sounds, and visual refinements

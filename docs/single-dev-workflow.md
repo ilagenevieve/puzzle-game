@@ -156,6 +156,8 @@ git push origin develop
 
 Enjoy the peaceful ocean-themed development experience with colorful marine indicators:
 
+> **Node.js Compatibility Note**: For the best experience, we recommend using Node.js v18 or v20 LTS versions. Our scripts automatically check for compatibility issues with newer versions of Node.js, particularly with the better-sqlite3 dependency.
+
 ```bash
 # Launch the interactive ocean-themed development navigator
 npm run start:dev
@@ -224,6 +226,7 @@ gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
 4. **Local Testing**: Use `npm run check` and `npm run dev:logs` for quality assurance
 5. **Branch Protection**: Main branch is protected; develop branch is semi-protected
 6. **Branch Management**: Use `npm run branches:cleanup` to prevent branch overflow
+7. **Compatibility**: Scripts automatically check for Node.js version compatibility issues
 
 ## Branch Management
 
