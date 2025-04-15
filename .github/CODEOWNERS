@@ -1,0 +1,11 @@
+# These owners will be the default owners for everything in the repo
+* @ilagenevieve
+
+# Frontend code ownership
+/frontend/ @ilagenevieve
+
+# Backend code ownership
+/backend/ @ilagenevieve
+
+# Documentation
+/docs/ @ilagenevieve
