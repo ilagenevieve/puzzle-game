@@ -152,11 +152,32 @@ function check_component() {
 cd "$(dirname "$0")/.."
 PROJECT_ROOT=$(pwd)
 
-# Print header
-print_status "magenta" "
-=================================================
-   🌊 Ocean of Puzzles - Build Check System
-=================================================
+# Print header with ocean theme
+print_status "cyan" "
+       .-.
+     .'   `.
+    :       :
+    :       :
+     `.___.'
+       /|\\_________________________
+      / | \\                        `-.
+     /  |  \\                          \\
+    /   |   \\                          \\
+   /    |    \\                          \\
+  /     |     \\                          \\
+ /______|______\\                          \\
+ \\      |     /\\_________________________/
+  \\     |    /
+   \\    |   /       🌴
+    \\   |  /
+     \\  | /
+      \\ |/
+       \\|
+"
+print_status "blue" "
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+     🌊 Ocean of Puzzles - Quality Check System
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
 
 # Track overall success
@@ -173,11 +194,20 @@ if check_component "backend"; then
   BACKEND_SUCCESS=true
 fi
 
-# Print summary
-print_status "magenta" "
-=================================================
-   🌊 Build Check Summary
-=================================================
+# Print summary with ocean theme
+print_status "cyan" "
+    o
+ __/|\\__
+ \\ o.O /
+ ==(.)== <=== Dolphin QA inspector is analyzing the results...
+   ) (
+  (   )
+ /     \\
+"
+print_status "blue" "
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+      🌊 Ocean of Puzzles - Quality Check Results
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
 
 if [ "$FRONTEND_SUCCESS" = true ]; then
@@ -194,16 +224,50 @@ fi
 
 if [ "$FRONTEND_SUCCESS" = true ] && [ "$BACKEND_SUCCESS" = true ]; then
   print_status "green" "
-=================================================
-   ✅ All build checks completed successfully! 
-=================================================
+                                  .-'
+                               .'
+                             .'
+                             |
+                          .-'|
+                      _.-'   |
+                  _.-'       |          _.---.
+                .'                    .'      |
+                |                   .'        |
+                |                 .'          '-.
+                |               .'               '.
+                |             .'                   '.
+        '.      |           .'                       '-.
+          '.    |         .'                            '-._
+            '.  |       .'                            '-.
+              '.      .'                        _.--'    '.
+                '.   .'                     _.-'            '.
+                  '.'                   _.-'                  '.
+                   |                 _.-                     _.'
+                   |             _.-'                     _.'
+                   |         _.-'                     _.-'
+                   |     _.-'                     _.-'
+                   | _.-'                     _.-'
+                   |'                     _.-'
+                   |                  _.-'
+                   |               .-'
+                   |             .'
+                   |           .'            🏄‍♂️ SURF'S UP!
+                   '-.       .'                EVERYTHING PASSED!
+                      '. _ .'
 "
   exit 0
 else
   print_status "red" "
-=================================================
+                 (
+        .         )        (
+      (  )    .  (        )  )
+       ) ( (  )  )  )  ( (  (
+      (_(__)_)_)_)__)_)__)__)
+
    ❌ Some build checks failed - See details above
-=================================================
+   
+   🏊‍♂️ Don't worry, the ocean is still calm...
+       Fix the issues and try again!
 "
   exit 1
 fi

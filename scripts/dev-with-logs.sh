@@ -216,11 +216,29 @@ trap cleanup EXIT INT TERM
 COMPONENT_PIDS=()
 MONITOR_PIDS=()
 
-# Display welcome message
-print_status "magenta" "
-=================================================
-   🌊 Ocean of Puzzles - Development Environment
-=================================================
+# Display welcome message with ocean theme
+print_status "cyan" "
+                  _.-'\\
+           ._.-'|\\ \\
+    ___   |     ' \\                      .--._______
+ .-'   \\  |         \\                  .'  .-'      '-.
+|       \\ |           \\               /   /            \\
+ \\        |             \\             |   |              |
+  '-.     |          .-')'            '-, |              |
+     '----+.       .'.-'                 `'              |
+           |     .'                        \\            /
+          .'   .-'                          '.        .'
+          |    |                              '._____.'
+          \\    |
+           \\   |
+            \\  |  
+             \\ | 
+              \\|                               🐠
+"
+print_status "blue" "
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+    🌊 Ocean of Puzzles - Development Environment
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
 
 # Check prerequisites
@@ -261,14 +279,19 @@ fi
 
 # Only proceed if all components started
 if [ "$ALL_STARTED" = true ]; then
-  # Display active components
+  # Display active components with ocean theme
   print_status "green" "✅ All components started successfully!"
   print_status "blue" "
-=================================================
+        .
+       ":"
+     ___:____     |"\/"|
+   ,'        `.    \  /
+   |  O        \___/  |
+ ~^~^~^~^~^~^~^~^~^~^~^~^~
    🌊 Active Components:
-   - Backend: http://localhost:$BACKEND_PORT
-   - Frontend: http://localhost:$FRONTEND_PORT
-=================================================
+   🐚 Backend: http://localhost:$BACKEND_PORT
+   🐙 Frontend: http://localhost:$FRONTEND_PORT
+ ~^~^~^~^~^~^~^~^~^~^~^~^~
 "
 
   # Start monitoring logs for errors
@@ -276,16 +299,34 @@ if [ "$ALL_STARTED" = true ]; then
   monitor_logs "backend"
   monitor_logs "frontend"
 
-  # Display error log information
+  # Display error log information with ocean theme
+  print_status "cyan" "
+       _\/_
+        /\\
+        /\\
+       /  \\
+      /____\\
+        ||
+        ||
+        ||
+        ||
+   \\===||====/
+    \\==||==/
+     \\=||=/
+      \\||/
+       ||
+       ||
+       \\/ 
+  "
   print_status "yellow" "
-=================================================
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
    📝 Full logs are available in the logs directory:
-   - Backend: logs/backend.log
-   - Frontend: logs/frontend.log
-=================================================
+   🐬 Backend: logs/backend.log
+   🐟 Frontend: logs/frontend.log
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
 
-  print_status "cyan" "👉 Press Ctrl+C to shut down all components."
+  print_status "cyan" "🦀 Press Ctrl+C to swim away and shut down all components."
 
   # Wait for all component processes to finish
   wait ${COMPONENT_PIDS[@]}

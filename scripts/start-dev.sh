@@ -20,52 +20,92 @@ function print_status() {
 cd "$(dirname "$0")/.."
 PROJECT_ROOT=$(pwd)
 
-# Display welcome message
-print_status "magenta" "
-=================================================
-   🌊 Ocean of Puzzles - Development Launcher
-=================================================
+# Display welcome message with ocean theme
+print_status "blue" "
+       __    __    __
+      /  \\__/  \\__/  \\
+     /             __/
+    /        _____/
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
 
-# Show menu
-print_status "blue" "Select a development mode:"
-print_status "cyan" "1) Standard Mode - Simple concurrent development"
-print_status "cyan" "2) Enhanced Mode - With detailed logging and error tracking"
-print_status "cyan" "3) Check & Run - Run checks first, then start with enhanced logging"
-print_status "cyan" "4) Frontend Only - Run only the frontend"
-print_status "cyan" "5) Backend Only - Run only the backend"
-print_status "cyan" "q) Quit"
+print_status "cyan" "
+             _
+          __|_|__
+         |       |                       
+        /|   o   |\\
+       /_|_______|_\\           
+         /|   |\\               
+        / |   | \\              
+       /  |___|  \\            
+      /___|___|___\\
+          | |
+          | |
+         /   \\
+        |_____|
+"
+
+print_status "blue" "
+   🐳 Ocean of Puzzles - Development Navigator 🧭
+ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+"
+
+# Show menu with ocean theme
+print_status "blue" "🐚 Choose your ocean adventure:"
+print_status "cyan" "🌊 1) Calm Waters       - Standard development (frontend + backend)"
+print_status "cyan" "🔍 2) Deep Dive         - Enhanced mode with detailed logging"
+print_status "cyan" "🧪 3) Treasure Hunter   - Run checks first, then start development"
+print_status "cyan" "🏄‍♂️ 4) Surfing           - Frontend only (UI development)"
+print_status "cyan" "🐠 5) Coral Reef        - Backend only (API development)"
+print_status "cyan" "🏝️  q) Desert Island    - Quit and return to shore"
+
+# Display a cute fish
+print_status "magenta" "
+       ><((°>    <°))><        ><((°>
+"
 
 # Read user choice
-read -p "Enter your choice [1-5 or q]: " choice
+read -p "🐙 Enter your choice [1-5 or q]: " choice
 
 case $choice in
   1)
-    print_status "green" "Starting standard development mode..."
+    print_status "green" "🌊 Setting sail on Calm Waters..."
+    print_status "blue" "Starting standard development mode..."
     npm run dev
     ;;
   2)
-    print_status "green" "Starting enhanced development mode with logging..."
+    print_status "green" "🔍 Taking a Deep Dive into the ocean..."
+    print_status "blue" "Starting enhanced development mode with detailed logging..."
     ./scripts/dev-with-logs.sh
     ;;
   3)
-    print_status "green" "Running checks and then starting development..."
+    print_status "green" "🧪 Hunting for treasure in the deep blue..."
+    print_status "blue" "Running quality checks and then starting development..."
     ./scripts/check-builds.sh && ./scripts/dev-with-logs.sh
     ;;
   4)
-    print_status "green" "Starting frontend only..."
+    print_status "green" "🏄‍♂️ Catching some waves with the frontend..."
+    print_status "blue" "Starting frontend only for UI development..."
     cd frontend && npm run dev
     ;;
   5)
-    print_status "green" "Starting backend only..."
+    print_status "green" "🐠 Exploring the Coral Reef of the backend..."
+    print_status "blue" "Starting backend only for API development..."
     cd backend && npm run dev
     ;;
   q|Q)
-    print_status "yellow" "Exiting..."
+    print_status "yellow" "🏝️ Returning to shore. Have a relaxing day!"
+    print_status "cyan" "
+       |\      _,,,---,,_
+       /,`.-'`'    -.  ;-;;,_   Thanks for
+      |,4-  ) )-,_..;\ (  `'-'  swimming with us!
+     '---''(_/--'  `-'\_)  
+    "
     exit 0
     ;;
   *)
-    print_status "red" "Invalid option. Exiting."
+    print_status "red" "🌋 Uncharted waters! That's not a valid option."
+    print_status "yellow" "Please try again with a choice from the menu."
     exit 1
     ;;
 esac
