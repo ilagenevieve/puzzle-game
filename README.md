@@ -14,10 +14,12 @@ Ocean of Puzzles is currently under active development:
 
 - ✅ **Phase 1: Foundation** - Complete
 - ✅ **Phase 2: Authentication & Data Layer** - Complete
-- 🔄 **Phase 3: Game Engine Integration** - Next Up
-- 📅 **Phases 4-8** - Planned
+- ✅ **Phase 3: Frontend Framework & UI** - Complete
+- ✅ **Phase 4: Game Engine Integration** - Complete
+- 🔄 **Phase 5: Game Implementations** - In Progress (20%)
+- 📅 **Phases 6-9** - Planned
 
-See our [implementation status](docs/implementation-status.md) document for more details.
+See our [implementation status](IMPLEMENTATION_STATUS.md) document for a detailed breakdown of progress.
 
 ## 🐠 Features That Shimmer Like Ocean Treasures
 
@@ -67,6 +69,72 @@ To dive into development:
 
 5. Visit `http://localhost:3000` to begin your puzzle voyage
 
+### 🧪 Running Tests
+
+Test your ocean voyage before setting sail:
+
+```bash
+# Run all tests
+npm test
+
+# Run frontend tests only
+npm run test:frontend
+
+# Run backend tests only
+npm run test:backend
+
+# Run with coverage reports
+cd frontend && npm run test:coverage
+cd backend && npm run test:coverage
+```
+
+### 🔍 Code Quality Checks
+
+Ensure your code meets our quality standards:
+
+```bash
+# Run linting checks
+npm run lint
+
+# Run type checking (frontend)
+npm run typecheck
+
+# Run all build checks
+npm run check
+```
+
+### 🐞 Ocean-Themed Interactive Development
+
+Dive into our soothing ocean-themed development environment:
+
+```bash
+# Launch the interactive ocean-themed development navigator
+npm run start:dev
+
+# Start with enhanced logging and ocean visuals
+npm run dev:logs
+
+# Run quality checks first, then start with enhanced logging
+npm run dev:check
+```
+
+The interactive ocean-themed development navigator offers:
+1. 🌊 **Calm Waters** - Standard development (frontend + backend)
+2. 🔍 **Deep Dive** - Enhanced mode with detailed logging
+3. 🧪 **Treasure Hunter** - Run checks first, then start development
+4. 🏄‍♂️ **Surfing** - Frontend only (UI development)
+5. 🐠 **Coral Reef** - Backend only (API development)
+
+Our enhanced ocean-themed development environment features:
+- Colorful ocean-themed terminal displays with marine life visuals
+- Intelligent component startup with wave-like progress indicators
+- Real-time error detection that bubbles up like ocean currents
+- Automatic dependency detection and installation (including nodemon)
+- All logs saved to the `logs/` directory like treasures in a chest
+- Color-coded output that mimics the peaceful colors of the ocean
+- Robust error handling with friendly marine-themed messages
+- Automatic directory creation and permission setup
+
 For more detailed setup instructions, check our [environment setup guide](docs/environment-setup.md).
 
 ## 🐳 Puzzle Currents (Game Types)
@@ -102,27 +170,49 @@ Our journey across the puzzle ocean follows these currents:
 
 1. **Foundation Shores** ✅: Development environment and core architecture
 2. **Authentication Cove** ✅: User accounts and data persistence
-3. **Game Engine Bay** 🔄: Phaser integration and core game mechanics
-4. **Game Implementation**: Individual game implementations
-5. **Multiplayer Ocean**: P2P connections for 1v1 gameplay
-6. **AI Islands**: Intelligent computer opponents
-7. **Polish Lagoon**: Animations, sounds, and visual refinements
-8. **Deployment Harbor**: Testing and launching to production
+3. **Frontend Framework Bay** ✅: UI components, forms, responsive layouts
+4. **Game Engine Reef** ✅: Phaser integration and game scene architecture
+5. **Game Implementation Waters** 🔄: Individual game implementations (Nim complete)
+6. **Multiplayer Ocean**: P2P connections for 1v1 gameplay
+7. **AI Islands**: Intelligent computer opponents
+8. **Polish Lagoon**: Animations, sounds, and visual refinements
+9. **Deployment Harbor**: Testing and launching to production
 
 ## 📚 Documentation
 
-Comprehensive documentation is available in the `docs/` directory:
+Our project documentation follows a single source of truth principle:
 
-- [Architecture Overview](docs/architecture.md)
-- [Frontend Architecture](docs/frontend-architecture.md)
-- [Database Design](docs/database-design.md)
-- [Authentication](docs/authentication.md)
-- [Implementation Status](docs/implementation-status.md)
-- [Environment Setup](docs/environment-setup.md)
+- [Implementation Status](IMPLEMENTATION_STATUS.md): Master tracking document for project progress
+- [Architecture Overview](docs/architecture.md): System architecture and design decisions
+- [Frontend Architecture](docs/frontend-architecture.md): Detailed frontend architecture
+- [Backend Architecture](docs/backend-architecture.md): Detailed backend architecture
+- [Database Design](docs/database-design.md): Database schema and relationships
+- [Authentication](docs/authentication.md): Security implementation
+- [Environment Setup](docs/environment-setup.md): Development environment guide
+
+See the [documentation index](docs/README.md) for the complete structure.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please check our [contribution guidelines](docs/dev-workflow/git-workflow.md) before getting started.
+We welcome contributions! Please check our [contribution guidelines](docs/dev-workflow/git-workflow.md) and [branch management guide](docs/dev-workflow/branch-management.md) before getting started.
+
+To keep the repository clean, we provide several helpful branch management tools:
+
+```bash
+# Interactive ocean-themed branch cleanup utility
+npm run branches:cleanup
+
+# Quick cleanup of local merged branches
+npm run branches:clean-local
+
+# Interactive cleanup of remote branches
+npm run branches:clean-remote
+
+# Sync local branches with remote (fetch, prune, pull develop and main)
+npm run branches:sync
+```
+
+These tools help maintain a clean repository and streamline the solo developer workflow.
 
 ## 🏖️ Join Our Ocean Adventure
 

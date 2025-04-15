@@ -1,12 +1,13 @@
 <script>
   import { Router, Route } from 'svelte-navigator'
   import { onMount } from 'svelte'
-  import { userStore } from './stores/user-store'
+  import { userStore, toastStore } from './stores/user-store'
   import { getCurrentUser } from './services/api'
   
   // Components
   import Header from './components/layout/Header.svelte'
   import Footer from './components/layout/Footer.svelte'
+  import Toast from './components/layout/Toast.svelte'
   import AuthGuard from './components/auth/AuthGuard.svelte'
   
   // Pages
@@ -15,6 +16,7 @@
   import Register from './routes/Register.svelte'
   import About from './routes/About.svelte'
   import NotFound from './routes/NotFound.svelte'
+  import GameDemo from './routes/GameDemo.svelte'
   
   // Protected Pages
   import Dashboard from './routes/Dashboard.svelte'
@@ -26,8 +28,9 @@
   onMount(async () => {
     try {
       const userData = await getCurrentUser()
-      if (userData) {
+      if (userData && userData.data && userData.data.user) {
         userStore.setUser(userData.data.user)
+        toastStore.show(`Welcome back, ${userData.data.user.username}!`, 'success')
       }
     } catch (error) {
       console.error('Failed to load user session:', error)
@@ -35,9 +38,24 @@
       isLoading = false
     }
   })
+  
+  // Function to check if user's browser supports localStorage
+  function isLocalStorageAvailable() {
+    try {
+      const test = 'test'
+      localStorage.setItem(test, test)
+      localStorage.removeItem(test)
+      return true
+    } catch(e) {
+      return false
+    }
+  }
 </script>
 
 <main class="app-container ocean-theme">
+  <!-- Toast notifications - visible in all routes -->
+  <Toast position="top-right" />
+  
   {#if isLoading}
     <div class="loading-screen">
       <div class="wave-loader">
@@ -57,6 +75,7 @@
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/about" component={About} />
+        <Route path="/game-demo" component={GameDemo} />
         
         <!-- Protected Routes -->
         <Route path="/dashboard">

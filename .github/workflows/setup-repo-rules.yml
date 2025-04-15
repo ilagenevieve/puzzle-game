@@ -1,0 +1,62 @@
+name: Setup Repository Rules
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply_settings:
+        description: 'Apply solo developer settings (y/n)'
+        required: true
+        default: 'y'
+
+jobs:
+  setup-repository:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      repository-projects: write
+      repository-rules: write 
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup GitHub CLI
+        run: |
+          echo "Setting up GitHub CLI and authenticating"
+          gh auth setup-git --no-prompt
+          
+      - name: Display current rules
+        run: |
+          echo "🌊 Current repository rules..."
+          gh api repos/${{ github.repository }}/rulesets --jq '.repository_rules[]'
+          
+      - name: Apply solo developer settings
+        if: ${{ github.event.inputs.apply_settings == 'y' }}
+        run: |
+          echo "🐬 Applying solo developer settings..."
+          
+          # The actual commands vary based on GitHub's API version
+          # This workflow mainly serves as a reminder for manual settings
+          echo "⚠️ IMPORTANT: Some settings need to be applied manually."
+          echo "Please visit: https://github.com/${{ github.repository }}/settings/rules"
+          echo ""
+          echo "👉 Recommended settings for solo developers:"
+          echo "1. Create a rule that requires PRs only for the main branch"
+          echo "2. Set up the rule to allow direct pushes to develop branch"
+          echo "3. Follow the instructions in branch-management.md"
+          
+      - name: Instructions for manual settings
+        run: |
+          echo "🌊 Ocean of Puzzles - Repository Setup 🌊"
+          echo ""
+          echo "For full solo developer setup, please:"
+          echo ""
+          echo "1. Go to your repository settings: https://github.com/${{ github.repository }}/settings"
+          echo "2. Navigate to 'Rules' in the left sidebar"
+          echo "3. If a rule exists requiring PRs for all branches:"
+          echo "   - Edit the rule"
+          echo "   - Change 'Target branches' to include only 'main'"
+          echo "   - Save the rule"
+          echo ""
+          echo "This will allow direct pushes to the develop branch while"
+          echo "still requiring pull requests for production (main branch)."

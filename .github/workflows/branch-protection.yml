@@ -1,0 +1,66 @@
+name: Branch Protection
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/branch-protection.yml'
+
+jobs:
+  setup-branch-protection:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      repository-projects: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Apply branch protection rules
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const yaml = require('js-yaml');
+            
+            try {
+              // Load branch protection configuration
+              const configFile = fs.readFileSync('.github/branch-protection.yml', 'utf8');
+              const config = yaml.load(configFile);
+              
+              // Extract branch configurations
+              const branchConfigs = config.branches || [];
+              
+              console.log(`Found ${branchConfigs.length} branch configurations to apply`);
+              
+              // Apply each branch configuration
+              for (const branch of branchConfigs) {
+                console.log(`Setting up protection for branch: ${branch.name}`);
+                
+                try {
+                  await github.rest.repos.updateBranchProtection({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    branch: branch.name,
+                    required_status_checks: branch.protection.required_status_checks,
+                    enforce_admins: branch.protection.enforce_admins,
+                    required_pull_request_reviews: branch.protection.required_pull_request_reviews,
+                    restrictions: branch.protection.restrictions,
+                    required_linear_history: branch.protection.required_linear_history,
+                    allow_force_pushes: branch.protection.allow_force_pushes,
+                    allow_deletions: branch.protection.allow_deletions,
+                    required_conversation_resolution: true,
+                  });
+                  
+                  console.log(`Successfully configured protection for branch: ${branch.name}`);
+                } catch (error) {
+                  console.error(`Error setting up protection for branch ${branch.name}:`, error);
+                }
+              }
+            } catch (error) {
+              console.error('Error processing branch protection configuration:', error);
+              core.setFailed('Failed to apply branch protection rules');
+            }

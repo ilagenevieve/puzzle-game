@@ -1,6 +1,6 @@
 <script>
   import { Link, useNavigate } from 'svelte-navigator'
-  import { isAuthenticated, displayName } from '../../stores/user-store'
+  import { isAuthenticated, displayName, userStore, toastStore } from '../../stores/user-store'
   import { logout } from '../../services/api'
   
   let isMenuOpen = false
@@ -20,9 +20,12 @@
   async function handleLogout() {
     try {
       await logout()
-      window.location.href = '/' // Force full page reload to clear all state
+      userStore.clearUser() // Clear user from store
+      toastStore.show('You have been successfully logged out', 'success')
+      navigate('/', { replace: true }) // Navigate to home page
     } catch (error) {
       console.error('Logout failed:', error)
+      toastStore.show('Failed to logout. Please try again.', 'error')
     }
   }
 </script>
@@ -50,9 +53,15 @@
               <Link to="/games" on:click={closeMenu}>Play</Link>
             </li>
             <li class="nav-item">
+              <Link to="/game-demo" on:click={closeMenu}>Game Demo</Link>
+            </li>
+            <li class="nav-item">
               <Link to="/profile" on:click={closeMenu}>My Profile</Link>
             </li>
           {:else}
+            <li class="nav-item">
+              <Link to="/game-demo" on:click={closeMenu}>Game Demo</Link>
+            </li>
             <li class="nav-item">
               <Link to="/games" on:click={closeMenu}>Games</Link>
             </li>
