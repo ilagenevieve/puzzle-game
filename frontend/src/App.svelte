@@ -27,6 +27,14 @@
   
   onMount(async () => {
     try {
+      // Mock user session for demo without a backend
+      if (window.location.hostname === 'localhost') {
+        setTimeout(() => {
+          isLoading = false
+        }, 1000)
+        return
+      }
+      
       const userData = await getCurrentUser()
       if (userData && userData.data && userData.data.user) {
         userStore.setUser(userData.data.user)

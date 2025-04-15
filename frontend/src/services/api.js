@@ -36,6 +36,11 @@ async function apiRequest(endpoint, options = {}) {
   }
 
   try {
+    // In development, if we're accessing localhost, we'll mock the responses
+    if (window.location.hostname === 'localhost') {
+      return mockApiResponse(endpoint, options);
+    }
+      
     const startTime = performance.now()
     const response = await fetch(`${API_BASE}${endpoint}`, fetchOptions)
     const endTime = performance.now()
@@ -212,6 +217,72 @@ export async function makeMove(gameId, moveData) {
 // Get user stats
 export async function getUserStats() {
   return apiRequest('/users/stats')
+}
+
+/**
+ * Mock API responses for localhost development without a backend
+ * @param {string} endpoint - API endpoint
+ * @param {Object} options - Fetch options
+ * @returns {Promise<Object>} Mocked API response
+ */
+function mockApiResponse(endpoint, options = {}) {
+  // Add a delay to simulate network request
+  return new Promise(resolve => {
+    setTimeout(() => {
+      // Mock responses based on endpoint
+      switch (endpoint) {
+        case '/users/me':
+          resolve({
+            success: true,
+            data: {
+              user: null // No authenticated user in demo mode
+            }
+          });
+          break;
+        
+        case '/games/types':
+          resolve({
+            success: true,
+            data: {
+              types: [
+                {
+                  id: 1,
+                  name: 'nim',
+                  description: 'A mathematical game of strategy',
+                  rules: JSON.stringify({
+                    piles: [3, 5, 7],
+                    removeMin: 1,
+                    removeMax: null,
+                    lastTakeWins: true
+                  })
+                },
+                {
+                  id: 2,
+                  name: 'domineering',
+                  description: 'A strategic game played on a grid',
+                  rules: JSON.stringify({
+                    width: 8,
+                    height: 8,
+                    player1Direction: 'horizontal',
+                    player2Direction: 'vertical'
+                  })
+                }
+              ]
+            }
+          });
+          break;
+          
+        default:
+          // Default response structure
+          resolve({
+            success: true,
+            data: {
+              message: 'Mock API response for endpoint: ' + endpoint
+            }
+          });
+      }
+    }, 500); // 500ms delay
+  });
 }
 
 /**
