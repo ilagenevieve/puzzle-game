@@ -1,0 +1,32 @@
+---
+# This configuration defines GitHub branch protection rules for the repository
+# This is intended to be used with the "GitHub Settings" app (probot/settings)
+# or with GitHub Enterprise Cloud API
+
+branches:
+  # Main branch (production) - Strict protection
+  - name: main
+    protection:
+      required_pull_request_reviews: null  # No reviews required for solo developer
+      required_status_checks:
+        strict: true  # Require branches to be up to date before merging
+        contexts:
+          - "lint-and-test"  # CI job name
+      enforce_admins: false  # Allow admin overrides for emergencies
+      required_signatures: false
+      required_linear_history: true  # Prevent merge commits
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null  # No restrictions on who can push
+      
+  # Develop branch - Relaxed protection for solo developer
+  - name: develop
+    protection:
+      required_pull_request_reviews: null  # No reviews required
+      required_status_checks: null  # No status checks required
+      enforce_admins: false
+      required_signatures: false
+      required_linear_history: false  # Allow merge commits
+      allow_force_pushes: false
+      allow_deletions: false
+      restrictions: null  # No restrictions on who can push

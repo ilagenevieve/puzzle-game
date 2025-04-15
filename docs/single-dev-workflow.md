@@ -2,7 +2,7 @@
 
 This is a quick reference guide for the Ocean of Puzzles development workflow, optimized for a single developer. For more detailed information, see [Git Workflow](dev-workflow/git-workflow.md).
 
-## Daily Development Flow
+## Daily Development Flow (No PR Required)
 
 ### 1. Start Work on a New Feature
 
@@ -25,7 +25,29 @@ git push -u origin feature/my-new-feature
 git push
 ```
 
-### 2. Complete and Merge a Feature
+### 2. Complete and Merge a Feature (Direct Push Method)
+
+```bash
+# Make sure your changes are committed
+git add .
+git commit -m "feat: finalize feature xyz"
+
+# Make sure tests pass locally
+npm test
+
+# Switch to develop and merge your changes
+git checkout develop
+git merge feature/my-new-feature
+
+# Push directly to develop (no PR needed)
+git push origin develop
+
+# Clean up feature branch
+git branch -d feature/my-new-feature
+git push origin --delete feature/my-new-feature
+```
+
+### 2b. Alternative: Complete with Pull Request (Optional for Tracking)
 
 ```bash
 # Create a pull request
@@ -51,7 +73,12 @@ git checkout -b docs/update-xyz
 git add .
 git commit -m "docs: update xyz documentation"
 
-# Create and merge PR in one step
+# Direct merge method (faster)
+git checkout develop
+git merge docs/update-xyz
+git push origin develop
+
+# OR create and merge PR for tracking
 gh pr create --title "docs: update xyz documentation" --body "Updated documentation" --base develop
 gh pr merge --merge
 ```
@@ -67,14 +94,19 @@ git checkout -b bugfix/fix-issue
 git add .
 git commit -m "fix: resolve issue with xyz"
 
-# Create and merge PR
+# Direct merge method (faster)
+git checkout develop
+git merge bugfix/fix-issue
+git push origin develop
+
+# OR create and merge PR for tracking
 gh pr create --title "fix: resolve issue with xyz" --body "Fixed bug in xyz" --base develop
 gh pr merge --merge
 ```
 
 ## Release Process
 
-When you're ready to make a release:
+When you're ready to make a release (PR to main is **required**):
 
 ```bash
 # Create a release branch
@@ -85,8 +117,14 @@ git checkout -b release/v1.0.0
 git add .
 git commit -m "chore: bump version to 1.0.0"
 
-# Create PR to main and merge
+# Run tests and checks locally
+npm run check
+npm test
+
+# Create PR to main (mandatory for production)
 gh pr create --title "chore: release v1.0.0" --body "Release version 1.0.0" --base main
+
+# Wait for CI to pass on GitHub, then merge
 gh pr merge --merge
 
 # Tag the release
@@ -95,20 +133,47 @@ git pull
 git tag -a v1.0.0 -m "Version 1.0.0"
 git push origin v1.0.0
 
-# Create GitHub release (optional)
+# Create GitHub release
 gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
 
-# Merge back to develop
+# Merge back to develop (direct merge for speed)
 git checkout develop
-gh pr create --title "chore: merge release back to develop" --body "Sync develop with release" --base develop --head main
-gh pr merge --merge
+git pull origin develop
+git merge main
+git push origin develop
 ```
 
-## CI/CD Notes
+## CI/CD Configuration
 
-- Our CI workflow automatically distinguishes between documentation-only changes and code changes
-- Documentation-only PRs can be merged even if traditional CI checks would fail
-- For code changes, the system runs linting, type checking, and tests
+- **PRs are only required for the main branch** (production)
+- Direct pushes to develop branch are allowed (faster for solo development)
+- All branches trigger CI checks, but these are informational for develop branch
+- Documentation-only changes are auto-detected and fast-tracked
+- CI runs linting, type checking, and tests
+
+## Enhanced Local Development
+
+For better local development experience:
+
+```bash
+# Run development with enhanced logging
+npm run dev:logs
+
+# Check code quality then run development server
+npm run dev:check
+
+# Run just the tests
+npm test
+
+# Run linting
+npm run lint
+
+# Run type checking
+npm run typecheck
+
+# Run all checks (lint + typecheck)
+npm run check
+```
 
 ## Important GitHub CLI Commands
 
@@ -133,6 +198,14 @@ gh pr merge <number> --rebase # Rebases commits
 # Create a release
 gh release create v1.0.0 --title "Version 1.0.0" --notes "Release notes..."
 ```
+
+## Key Takeaways for Solo Development
+
+1. **Daily Work**: Direct pushes to develop branch are allowed - no PR needed
+2. **Production Releases**: PRs to main branch are required to ensure quality
+3. **CI/CD**: Automated testing happens on all branches but doesn't block develop
+4. **Local Testing**: Use `npm run check` and `npm run dev:logs` for quality assurance
+5. **Branch Protection**: Main branch is protected; develop branch is semi-protected
 
 For more detailed information on our Git workflow, branch protection rules, and GitHub configuration, see:
 - [Git Workflow](dev-workflow/git-workflow.md)
