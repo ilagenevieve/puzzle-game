@@ -40,8 +40,56 @@ const createUserStore = () => {
   }
 }
 
+// Create toast notification store
+export const createToastStore = () => {
+  const { subscribe, update } = writable({
+    messages: [],
+    nextId: 1
+  })
+
+  return {
+    subscribe,
+    // Add a new toast message
+    show: (message, type = 'info', duration = 5000) => {
+      const id = Date.now()
+      
+      // Add new toast
+      update(state => {
+        const newMessages = [...state.messages, { id, message, type, duration }]
+        return { ...state, messages: newMessages }
+      })
+      
+      // Auto-remove after duration
+      if (duration > 0) {
+        setTimeout(() => {
+          update(state => {
+            const filteredMessages = state.messages.filter(m => m.id !== id)
+            return { ...state, messages: filteredMessages }
+          })
+        }, duration)
+      }
+      
+      return id
+    },
+    // Remove a specific toast by ID
+    remove: (id) => {
+      update(state => {
+        const filteredMessages = state.messages.filter(m => m.id !== id)
+        return { ...state, messages: filteredMessages }
+      })
+    },
+    // Clear all toasts
+    clear: () => {
+      update(state => ({ ...state, messages: [] }))
+    }
+  }
+}
+
 // Create the main user store
 export const userStore = createUserStore()
+
+// Create the toast notification store
+export const toastStore = createToastStore()
 
 // Derived store for user ID
 export const userId = derived(
