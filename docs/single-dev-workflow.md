@@ -151,15 +151,18 @@ git push origin develop
 - Documentation-only changes are auto-detected and fast-tracked
 - CI runs linting, type checking, and tests
 
-## Enhanced Local Development
+## Enhanced Ocean-Themed Development Environment
 
-For better local development experience:
+Enjoy the peaceful ocean-themed development experience with colorful marine indicators:
 
 ```bash
-# Run development with enhanced logging
+# Launch the interactive ocean-themed development navigator
+npm run start:dev
+
+# Run development with ocean-themed enhanced logging
 npm run dev:logs
 
-# Check code quality then run development server
+# Run quality checks first, then launch ocean-themed dev environment
 npm run dev:check
 
 # Run just the tests
@@ -171,9 +174,22 @@ npm run lint
 # Run type checking
 npm run typecheck
 
-# Run all checks (lint + typecheck)
+# Run all checks with dolphin QA inspector visuals
 npm run check
 ```
+
+The ocean-themed interactive navigator offers multiple development paths:
+- 🌊 **Calm Waters** - Standard development (frontend + backend)
+- 🔍 **Deep Dive** - Enhanced mode with detailed logging and error tracking
+- 🧪 **Treasure Hunter** - Run checks first, then start development
+- 🏄‍♂️ **Surfing** - Frontend only for UI development
+- 🐠 **Coral Reef** - Backend only for API development
+
+The scripts feature automatic setup and dependency management:
+- Auto-creates logs directory with proper permissions
+- Detects and installs missing dependencies (including nodemon for backend)
+- Provides comprehensive error reporting with log file creation
+- Saves detailed logs to help debug any development issues
 
 ## Important GitHub CLI Commands
 

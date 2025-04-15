@@ -103,34 +103,37 @@ npm run typecheck
 npm run check
 ```
 
-### 🐞 Development with Enhanced Logging
+### 🐞 Ocean-Themed Interactive Development
 
-For local development with comprehensive error logging:
+Dive into our soothing ocean-themed development environment:
 
 ```bash
-# Interactive development menu with multiple options
+# Launch the interactive ocean-themed development navigator
 npm run start:dev
 
-# Start with enhanced logging (outputs to terminal and log files)
+# Start with enhanced logging and ocean visuals
 npm run dev:logs
 
-# Run checks first, then start with enhanced logging
+# Run quality checks first, then start with enhanced logging
 npm run dev:check
 ```
 
-The interactive development menu provides these options:
-1. Standard Mode - Simple concurrent development
-2. Enhanced Mode - With detailed logging and error tracking
-3. Check & Run - Run checks first, then start with enhanced logging
-4. Frontend Only - Run only the frontend
-5. Backend Only - Run only the backend
+The interactive ocean-themed development navigator offers:
+1. 🌊 **Calm Waters** - Standard development (frontend + backend)
+2. 🔍 **Deep Dive** - Enhanced mode with detailed logging
+3. 🧪 **Treasure Hunter** - Run checks first, then start development
+4. 🏄‍♂️ **Surfing** - Frontend only (UI development)
+5. 🐠 **Coral Reef** - Backend only (API development)
 
-The enhanced development mode:
-- Starts both frontend and backend with proper error handling
-- Captures and highlights errors in real-time
-- Saves all logs to the `logs/` directory for later inspection
-- Provides color-coded output for easier debugging
-- Robust error detection and detailed feedback
+Our enhanced ocean-themed development environment features:
+- Colorful ocean-themed terminal displays with marine life visuals
+- Intelligent component startup with wave-like progress indicators
+- Real-time error detection that bubbles up like ocean currents
+- Automatic dependency detection and installation (including nodemon)
+- All logs saved to the `logs/` directory like treasures in a chest
+- Color-coded output that mimics the peaceful colors of the ocean
+- Robust error handling with friendly marine-themed messages
+- Automatic directory creation and permission setup
 
 For more detailed setup instructions, check our [environment setup guide](docs/environment-setup.md).
 

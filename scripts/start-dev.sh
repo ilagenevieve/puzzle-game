@@ -21,29 +21,16 @@ cd "$(dirname "$0")/.."
 PROJECT_ROOT=$(pwd)
 
 # Display welcome message with ocean theme
-print_status "blue" "
-       __    __    __
-      /  \\__/  \\__/  \\
-     /             __/
-    /        _____/
- ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-"
+print_status "blue" "~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~"
 
-print_status "cyan" "
-             _
-          __|_|__
-         |       |                       
-        /|   o   |\\
-       /_|_______|_\\           
-         /|   |\\               
-        / |   | \\              
-       /  |___|  \\            
-      /___|___|___\\
-          | |
-          | |
-         /   \\
-        |_____|
-"
+cat << 'EOF' | while read -r line; do print_status "cyan" "$line"; done
+  🧜‍♀️   🐚   🐬   🌈   🐋   🏝️   🌴   🐡  
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+     🌊 OCEAN DEV NAVIGATOR 🧭 🌊 
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+EOF
+
+print_status "blue" "~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~"
 
 print_status "blue" "
    🐳 Ocean of Puzzles - Development Navigator 🧭
@@ -59,10 +46,10 @@ print_status "cyan" "🏄‍♂️ 4) Surfing           - Frontend only (UI deve
 print_status "cyan" "🐠 5) Coral Reef        - Backend only (API development)"
 print_status "cyan" "🏝️  q) Desert Island    - Quit and return to shore"
 
-# Display a cute fish
-print_status "magenta" "
-       ><((°>    <°))><        ><((°>
-"
+# Display colorful fish row
+cat << 'EOF' | while read -r line; do print_status "magenta" "$line"; done
+  ><((°>  <°))><  ><((°>  <°))><  ><((°>
+EOF
 
 # Read user choice
 read -p "🐙 Enter your choice [1-5 or q]: " choice
@@ -94,13 +81,13 @@ case $choice in
     cd backend && npm run dev
     ;;
   q|Q)
-    print_status "yellow" "🏝️ Returning to shore. Have a relaxing day!"
-    print_status "cyan" "
-       |\      _,,,---,,_
-       /,`.-'`'    -.  ;-;;,_   Thanks for
-      |,4-  ) )-,_..;\ (  `'-'  swimming with us!
-     '---''(_/--'  `-'\_)  
-    "
+    cat << 'EOF' | while read -r line; do print_status "yellow" "$line"; done
+    🏝️ Returning to shore. Have a relaxing day!
+    
+    🐠  Thanks for swimming with us!  🐬
+    
+    🌴   🌊   🏖️   🌞   🐚   🦀   🦭
+EOF
     exit 0
     ;;
   *)

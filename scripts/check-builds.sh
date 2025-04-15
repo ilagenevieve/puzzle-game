@@ -84,6 +84,23 @@ function check_dependencies() {
     print_status "green" "✅ $component dependencies already installed"
   fi
   
+  # Check if nodemon is needed and install globally if not present
+  if [ "$component" = "backend" ] && ! command -v nodemon &> /dev/null; then
+    print_status "yellow" "📦 Installing nodemon globally (required for backend)..."
+    local nodemon_output
+    nodemon_output=$(mktemp)
+    
+    npm install -g nodemon > "$nodemon_output" 2>&1
+    
+    if [ $? -ne 0 ]; then
+      print_status "red" "❌ Failed to install nodemon globally"
+      cat "$nodemon_output" | sed 's/^/  /'
+      print_status "yellow" "⚠️ Backend may not start correctly without nodemon"
+    else
+      print_status "green" "✅ Nodemon installed successfully"
+    fi
+  fi
+  
   return 0
 }
 
@@ -152,28 +169,19 @@ function check_component() {
 cd "$(dirname "$0")/.."
 PROJECT_ROOT=$(pwd)
 
+# Create logs directory
+mkdir -p "$PROJECT_ROOT/logs"
+chmod 755 "$PROJECT_ROOT/logs"
+
 # Print header with ocean theme
-print_status "cyan" "
-       .-.
-     .'   `.
-    :       :
-    :       :
-     `.___.'
-       /|\\_________________________
-      / | \\                        `-.
-     /  |  \\                          \\
-    /   |   \\                          \\
-   /    |    \\                          \\
-  /     |     \\                          \\
- /______|______\\                          \\
- \\      |     /\\_________________________/
-  \\     |    /
-   \\    |   /       🌴
-    \\   |  /
-     \\  | /
-      \\ |/
-       \\|
-"
+print_status "blue" "~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~"
+cat << 'EOF' | while read -r line; do print_status "cyan" "$line"; done
+  🐳   🌴   🏝️   🧿   🐬   🐡   🦈   🏊‍♀️   
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+   🌊 OCEAN OF PUZZLES CHECK SYSTEM 🌊
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+EOF
+print_status "blue" "~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~"
 print_status "blue" "
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
      🌊 Ocean of Puzzles - Quality Check System
@@ -195,15 +203,11 @@ if check_component "backend"; then
 fi
 
 # Print summary with ocean theme
-print_status "cyan" "
-    o
- __/|\\__
- \\ o.O /
- ==(.)== <=== Dolphin QA inspector is analyzing the results...
-   ) (
-  (   )
- /     \\
-"
+cat << 'EOF' | while read -r line; do print_status "cyan" "$line"; done
+  🐬 DOLPHIN QA INSPECTOR
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+  🔍 Analyzing results...
+EOF
 print_status "blue" "
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
       🌊 Ocean of Puzzles - Quality Check Results
@@ -223,51 +227,20 @@ else
 fi
 
 if [ "$FRONTEND_SUCCESS" = true ] && [ "$BACKEND_SUCCESS" = true ]; then
-  print_status "green" "
-                                  .-'
-                               .'
-                             .'
-                             |
-                          .-'|
-                      _.-'   |
-                  _.-'       |          _.---.
-                .'                    .'      |
-                |                   .'        |
-                |                 .'          '-.
-                |               .'               '.
-                |             .'                   '.
-        '.      |           .'                       '-.
-          '.    |         .'                            '-._
-            '.  |       .'                            '-.
-              '.      .'                        _.--'    '.
-                '.   .'                     _.-'            '.
-                  '.'                   _.-'                  '.
-                   |                 _.-                     _.'
-                   |             _.-'                     _.'
-                   |         _.-'                     _.-'
-                   |     _.-'                     _.-'
-                   | _.-'                     _.-'
-                   |'                     _.-'
-                   |                  _.-'
-                   |               .-'
-                   |             .'
-                   |           .'            🏄‍♂️ SURF'S UP!
-                   '-.       .'                EVERYTHING PASSED!
-                      '. _ .'
-"
+  cat << 'EOF' | while read -r line; do print_status "green" "$line"; done
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+      🏄‍♂️ SURF'S UP! EVERYTHING PASSED! 🌈 🌊
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+      🐠 🐙 🐬 🐡 🦀 🦑 🦞 🦐 🐚 🐳 🦈 🐋
+EOF
   exit 0
 else
-  print_status "red" "
-                 (
-        .         )        (
-      (  )    .  (        )  )
-       ) ( (  )  )  )  ( (  (
-      (_(__)_)_)_)__)_)__)__)
-
-   ❌ Some build checks failed - See details above
-   
-   🏊‍♂️ Don't worry, the ocean is still calm...
-       Fix the issues and try again!
-"
+  cat << 'EOF' | while read -r line; do print_status "magenta" "$line"; done
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+     ❌ SOME CHECKS FAILED - SEE ABOVE ❌
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+  🏊‍♂️ Don't worry, the ocean is still calm...
+     Fix the issues and try again! 🐠
+EOF
   exit 1
 fi

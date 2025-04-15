@@ -28,7 +28,8 @@ cd "$(dirname "$0")/.."
 PROJECT_ROOT=$(pwd)
 
 # Create logs directory
-mkdir -p logs
+mkdir -p "$PROJECT_ROOT/logs"
+chmod 755 "$PROJECT_ROOT/logs"
 
 # Check if node and npm are installed
 function check_prerequisites() {
@@ -67,9 +68,9 @@ function start_component() {
   local name=$1
   local command=$2
   local timeout=${3:-30}  # Default 30 seconds timeout
-  local log_file="logs/${name}.log"
-  local error_file="logs/${name}_error.log"
-  local pid_file="logs/${name}.pid"
+  local log_file="$PROJECT_ROOT/logs/${name}.log"
+  local error_file="$PROJECT_ROOT/logs/${name}_error.log"
+  local pid_file="$PROJECT_ROOT/logs/${name}.pid"
   
   # Create or truncate log files
   > "$log_file"
@@ -90,6 +91,12 @@ function start_component() {
     (
       cd "$PROJECT_ROOT/$name"
       npm install --no-fund --no-audit > "$log_file" 2> "$error_file" || echo "NPM install failed" > "$error_file"
+      
+      # Check if nodemon is needed and install globally if not present
+      if [ "$name" = "backend" ] && ! command -v nodemon &> /dev/null; then
+        print_status "yellow" "📦 Installing nodemon globally (required for backend)..."
+        npm install -g nodemon >> "$log_file" 2>> "$error_file" || echo "Nodemon install failed" >> "$error_file"
+      fi
     )
     
     # Check for errors in npm install
@@ -162,7 +169,7 @@ function start_component() {
 
 # Function to monitor component logs for errors
 function monitor_logs() {
-  local log_file="logs/$1.log"
+  local log_file="$PROJECT_ROOT/logs/$1.log"
   
   # List of error patterns to watch for
   error_patterns=(
@@ -217,24 +224,14 @@ COMPONENT_PIDS=()
 MONITOR_PIDS=()
 
 # Display welcome message with ocean theme
-print_status "cyan" "
-                  _.-'\\
-           ._.-'|\\ \\
-    ___   |     ' \\                      .--._______
- .-'   \\  |         \\                  .'  .-'      '-.
-|       \\ |           \\               /   /            \\
- \\        |             \\             |   |              |
-  '-.     |          .-')'            '-, |              |
-     '----+.       .'.-'                 `'              |
-           |     .'                        \\            /
-          .'   .-'                          '.        .'
-          |    |                              '._____.'
-          \\    |
-           \\   |
-            \\  |  
-             \\ | 
-              \\|                               🐠
-"
+print_status "blue" "~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~"
+cat << 'EOF' | while read -r line; do print_status "cyan" "$line"; done
+   🐙   🐠         🐬         🐚   🐟      
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+      🌊  OCEAN OF PUZZLES DEV  🌊
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+EOF
+print_status "blue" "~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~"
 print_status "blue" "
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
     🌊 Ocean of Puzzles - Development Environment
@@ -281,18 +278,17 @@ fi
 if [ "$ALL_STARTED" = true ]; then
   # Display active components with ocean theme
   print_status "green" "✅ All components started successfully!"
-  print_status "blue" "
-        .
-       ":"
-     ___:____     |"\/"|
-   ,'        `.    \  /
-   |  O        \___/  |
- ~^~^~^~^~^~^~^~^~^~^~^~^~
-   🌊 Active Components:
-   🐚 Backend: http://localhost:$BACKEND_PORT
-   🐙 Frontend: http://localhost:$FRONTEND_PORT
- ~^~^~^~^~^~^~^~^~^~^~^~^~
-"
+  
+  cat << EOF | sed 's/\\n/\n/g' | while read -r line; do print_status "blue" "$line"; done
+  ~^~^~^~^~^~^~^~^~^~^~^~^~
+EOF
+  print_status "blue" "   🌊 Active Components:"
+  print_status "blue" "   🐚 Backend: http://localhost:$BACKEND_PORT"
+  print_status "blue" "   🐙 Frontend: http://localhost:$FRONTEND_PORT" 
+  
+  cat << EOF | sed 's/\\n/\n/g' | while read -r line; do print_status "blue" "$line"; done
+  ~^~^~^~^~^~^~^~^~^~^~^~^~
+EOF
 
   # Start monitoring logs for errors
   print_status "yellow" "📊 Monitoring logs for errors..."
@@ -300,29 +296,16 @@ if [ "$ALL_STARTED" = true ]; then
   monitor_logs "frontend"
 
   # Display error log information with ocean theme
-  print_status "cyan" "
-       _\/_
-        /\\
-        /\\
-       /  \\
-      /____\\
-        ||
-        ||
-        ||
-        ||
-   \\===||====/
-    \\==||==/
-     \\=||=/
-      \\||/
-       ||
-       ||
-       \\/ 
-  "
+  cat << 'EOF' | while read -r line; do print_status "magenta" "$line"; done
+  🧜‍♀️ Log Files Available 📝
+  ≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈≈
+   🐚 🐚 🐚 🐚 🐚 🐚 🐚
+EOF
   print_status "yellow" "
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
    📝 Full logs are available in the logs directory:
-   🐬 Backend: logs/backend.log
-   🐟 Frontend: logs/frontend.log
+   🐬 Backend: $PROJECT_ROOT/logs/backend.log
+   🐟 Frontend: $PROJECT_ROOT/logs/frontend.log
  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 "
 
