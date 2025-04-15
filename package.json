@@ -11,6 +11,8 @@
     "dev:check": "./scripts/check-builds.sh && npm run dev:logs",
     "start:dev": "./scripts/start-dev.sh",
     "branches:cleanup": "./scripts/cleanup-branches.sh",
+    "branches:clean-local": "git branch --merged develop | grep -v \"^\\*\" | grep -v \"main\" | grep -v \"develop\" | xargs -r git branch -d",
+    "branches:sync": "git fetch --prune && git pull origin develop && git checkout main && git pull origin main && git checkout develop",
     "build": "npm run build:backend && npm run build:frontend",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",

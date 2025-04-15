@@ -42,7 +42,20 @@ Our project follows a simplified branch structure optimized for solo development
 ### Branch Cleanup
 Branches should be deleted after they are merged into `develop`. This keeps the repository clean and focused.
 
-To clean up merged branches:
+We provide several helpful npm scripts for branch management:
+
+```bash
+# Interactive branch cleanup with ocean-themed UI
+npm run branches:cleanup
+
+# Quick cleanup of local merged branches
+npm run branches:clean-local
+
+# Sync local branches with remote (fetch, prune, pull develop and main)
+npm run branches:sync
+```
+
+You can also use standard git commands:
 ```bash
 # List merged branches
 git branch --merged develop
