@@ -23,10 +23,12 @@ This folder contains comprehensive documentation for the Ocean of Puzzles game p
 
 - **Development Workflow**:
   - [Git Workflow](dev-workflow/git-workflow.md): Branching strategy and commit guidelines
+  - [Branch Management](dev-workflow/branch-management.md): Clear guidelines on branch structure and cleanup
   - [Code Review](dev-workflow/code-review.md): Code review process and standards
   - [Testing Standards](dev-workflow/testing-standards.md): Testing approach and best practices
   - [Style Guide](dev-workflow/style-guide.md): Code style and linting rules
   - [CI/CD](dev-workflow/ci-cd.md): Continuous integration and deployment
+  - [Single Developer Workflow](single-dev-workflow.md): Optimized workflow for solo development
 
 - **API and Integration**:
   - [API Reference](api.md): REST API endpoints and usage

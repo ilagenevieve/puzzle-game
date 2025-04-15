@@ -194,7 +194,13 @@ See the [documentation index](docs/README.md) for the complete structure.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please check our [contribution guidelines](docs/dev-workflow/git-workflow.md) before getting started.
+We welcome contributions! Please check our [contribution guidelines](docs/dev-workflow/git-workflow.md) and [branch management guide](docs/dev-workflow/branch-management.md) before getting started.
+
+To keep the repository clean, we provide a helpful branch cleanup utility:
+```bash
+# Clean up merged and stale branches
+npm run branches:cleanup
+```
 
 ## 🏖️ Join Our Ocean Adventure
 
