@@ -1,17 +1,35 @@
 <script>
-  import { navigate, Link } from 'svelte-navigator'
+  import { navigate, Link, useLocation } from 'svelte-navigator'
   import { login } from '../services/api'
-  import { userStore } from '../stores/user-store'
+  import { userStore, isAuthenticated } from '../stores/user-store'
+  import { onMount } from 'svelte'
   
   let username = ''
   let password = ''
   let loading = false
   let error = null
+  let redirectPath = '/dashboard'
+  
+  // Get location to check for redirect information
+  const location = useLocation()
   
   // Form validation state
   let submitted = false
   let usernameError = ''
   let passwordError = ''
+  
+  onMount(() => {
+    // If user is already authenticated, redirect to dashboard
+    if ($isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+      return
+    }
+    
+    // Check if we have a redirect path from a previous auth attempt
+    if ($location.state && $location.state.from) {
+      redirectPath = $location.state.from
+    }
+  })
   
   // Validate form fields
   function validateForm() {
@@ -48,7 +66,9 @@
     try {
       const response = await login(username, password)
       userStore.setUser(response.data.user)
-      navigate('/dashboard')
+      
+      // Navigate to the redirect path or dashboard
+      navigate(redirectPath, { replace: true })
     } catch (err) {
       error = err.message || 'Failed to login. Please check your credentials and try again.'
       userStore.setError(error)
@@ -72,6 +92,12 @@
           </div>
         {/if}
         
+        {#if redirectPath && redirectPath !== '/dashboard' && redirectPath !== '/login'}
+          <div class="alert alert-info">
+            Please sign in to access the requested page
+          </div>
+        {/if}
+        
         <form on:submit|preventDefault={handleSubmit} class="auth-form">
           <div class="form-group">
             <label for="username" class="form-label">Username</label>
@@ -83,6 +109,7 @@
               bind:value={username}
               disabled={loading}
               placeholder="Enter your username"
+              autocomplete="username"
             />
             {#if submitted && usernameError}
               <div class="invalid-feedback">{usernameError}</div>
@@ -99,6 +126,7 @@
               bind:value={password}
               disabled={loading}
               placeholder="Enter your password"
+              autocomplete="current-password"
             />
             {#if submitted && passwordError}
               <div class="invalid-feedback">{passwordError}</div>
@@ -256,6 +284,12 @@
         background-color: rgba(255, 126, 103, 0.1);
         border: 1px solid var(--ocean-coral);
         color: var(--ocean-coral);
+      }
+      
+      &.alert-info {
+        background-color: rgba(100, 181, 246, 0.1);
+        border: 1px solid var(--ocean-primary);
+        color: var(--ocean-primary);
       }
     }
     
