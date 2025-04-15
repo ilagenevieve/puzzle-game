@@ -1,9 +1,9 @@
-const { AppError } = require('../utils/errors')
+// Importing utilities
 const logger = require('../utils/logger')
 const config = require('../../config')
 
 // Central error handler middleware
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, _next) => {
   // Log the error
   logger.error({
     message: err.message,
@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
     requestId: req.id,
     path: req.path,
     method: req.method,
-    ...(err.isOperational ? {} : { error: err }),
+    ...(err.isOperational ? {} : { error: err })
   })
 
   // Set default values
@@ -39,8 +39,8 @@ const errorHandler = (err, req, res, next) => {
     error: {
       code: errorCode,
       message,
-      ...(errors.length > 0 ? { errors } : {}),
-    },
+      ...(errors.length > 0 ? { errors } : {})
+    }
   })
 }
 

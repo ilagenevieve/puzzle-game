@@ -25,22 +25,22 @@ const server = http.createServer(app)
 const peerServer = ExpressPeerServer(server, {
   debug: config.isDevelopment,
   path: config.peerjs.path,
-  port: config.peerjs.port,
+  port: config.peerjs.port
 })
 
 // Configure Socket.io
 const io = socketIo(server, {
   cors: {
     origin: config.cors.origin,
-    credentials: true,
-  },
+    credentials: true
+  }
 })
 
 // Configure session middleware
 const sessionMiddleware = session({
   store: new SQLiteStore({
     db: 'sessions.sqlite',
-    dir: path.join(__dirname, '../db'),
+    dir: path.join(__dirname, '../db')
   }),
   secret: config.session.secret,
   resave: false,
@@ -49,15 +49,15 @@ const sessionMiddleware = session({
     httpOnly: true,
     secure: config.session.secureCookies,
     sameSite: 'lax',
-    maxAge: config.session.maxAge,
-  },
+    maxAge: config.session.maxAge
+  }
 })
 
 // Middleware
 app.use(helmet())
 app.use(cors({
   origin: config.cors.origin,
-  credentials: true,
+  credentials: true
 }))
 app.use(compression())
 app.use(express.json())
@@ -81,7 +81,7 @@ app.use(errorHandler)
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next)
 io.use(wrap(sessionMiddleware))
 io.use((socket, next) => {
-  const session = socket.request.session
+  const { session } = socket.request
   if (session && session.userId) {
     socket.userId = session.userId
     next()
