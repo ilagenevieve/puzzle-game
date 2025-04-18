@@ -1,0 +1,61 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - develop   # staging
+      - main      # production
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    name: 🌊 Deploy to ${{ github.ref_name == 'main' && 'Production' || 'Staging' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    steps:
+      - name: 🐙 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      
+      - name: 📦 Install dependencies
+        run: |
+          echo "🌊 Installing dependencies..."
+          npm ci
+          
+          echo "🌊 Installing frontend dependencies..."
+          cd frontend && npm ci
+          cd ..
+          
+          echo "🌊 Installing backend dependencies..."
+          cd backend && npm ci
+          cd ..
+      
+      - name: 🔨 Build
+        run: |
+          echo "🌊 Building for ${{ github.ref_name == 'main' && 'production' || 'staging' }}..."
+          npm run build
+      
+      - name: 🐬 Deploy
+        run: |
+          echo "🌊 Deploying to ${{ github.ref_name == 'main' && 'production' || 'staging' }}..."
+          ./scripts/deploy.sh ${{ github.ref_name }}
+          echo "🚀 Deployment complete!"

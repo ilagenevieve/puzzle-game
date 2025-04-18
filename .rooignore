@@ -1,0 +1,14 @@
+# Files and directories to be ignored by Claude Code
+node_modules/
+dist/
+build/
+.git/
+*.sqlite
+*.sqlite3
+*.db
+
+# Large files that might slow down Claude Code
+*.mp4
+*.mov
+*.wav
+*.mp3

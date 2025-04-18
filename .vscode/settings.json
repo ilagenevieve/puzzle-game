@@ -1,0 +1,28 @@
+{
+  "rooCode.projectSettings": {
+    "customInstructions": "This is a mobile-first browser-based puzzle game with classic mathematical games (nim, domineering, dots-and-boxes), featuring 1v1 multiplayer (both P2P and AI opponents), user accounts for progress tracking, and modern visuals with animations.\n\nTechnology Stack:\n- Game Engine: Phaser 3\n- Frontend: Svelte + Vite\n- Backend: Node.js + Express\n- Database: SQLite (via better-sqlite3)\n- Authentication: Session-based (express-session + connect-sqlite3)\n- Networking: PeerJS (WebRTC) for direct gameplay, Socket.io for signaling\n- State Management: Svelte Stores\n- Deployment: Docker on Proxmox\n- Performance: GSAP (animations), Web Workers (AI), Workbox (caching)",
+    "autoApprove": {
+      "readFile": true,
+      "listFiles": true,
+      "searchFiles": true,
+      "listCodeDefinitionNames": true
+    },
+    "modes": {
+      "code": {
+        "filePatterns": [
+          ".*"
+        ]
+      },
+      "architect": {
+        "filePatterns": [
+          ".*\\.md$",
+          ".*\\.json$"
+        ]
+      }
+    }
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  }
+}

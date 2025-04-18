@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: puzzle-game-traefik
+    command:
+      - "--api.insecure=true"  # Enable dashboard in dev mode
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/traefik/certs
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.puzzles.local`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: builder  # Use the builder stage for development
+    container_name: puzzle-game-backend-dev
+    volumes:
+      - ./backend:/app  # Mount source code for hot reloading
+      - db_data:/app/db  # Named volume for database
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - PEERJS_PORT=9000
+      - DB_PATH=/app/db/puzzle_game.sqlite
+      - SESSION_SECRET=${SESSION_SECRET:-dev_session_secret}
+      - SESSION_MAX_AGE=${SESSION_MAX_AGE:-604800000}
+      - SESSION_INACTIVE_TIMEOUT=${SESSION_INACTIVE_TIMEOUT:-1800000}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://puzzles.local}
+      - SECURE_COOKIES=${SECURE_COOKIES:-false}  # False for HTTP in dev
+      - PEERJS_KEY=${PEERJS_KEY:-peerjs}
+      - PEERJS_PATH=${PEERJS_PATH:-/peerjs}
+      - STUN_SERVER=${STUN_SERVER:-stun:stun.l.google.com:19302}
+    command: npm run dev
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.puzzles.local`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
+      - "traefik.http.routers.peerjs.rule=Host(`peerjs.puzzles.local`)"
+      - "traefik.http.services.peerjs.loadbalancer.server.port=9000"
+    # Development extras
+    ports:
+      - "9229:9229"  # Node.js debugger port
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: builder  # Use the builder stage for development
+    container_name: puzzle-game-frontend-dev
+    volumes:
+      - ./frontend:/app  # Mount source code for hot reloading
+    environment:
+      - NODE_ENV=development
+      - FRONTEND_PORT=3000
+      - VITE_API_URL=http://api.puzzles.local/api/v1
+      - VITE_SOCKET_URL=http://api.puzzles.local
+      - VITE_PEERJS_HOST=peerjs.puzzles.local
+      - VITE_PEERJS_PORT=80
+      - VITE_PEERJS_PATH=${PEERJS_PATH:-/peerjs}
+    command: npm run dev
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - puzzle-game-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`puzzles.local`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+
+networks:
+  puzzle-game-network:
+    name: puzzle-game-network-dev
+    driver: bridge
+
+volumes:
+  db_data:
+    name: puzzle-game-db-data-dev
