@@ -1,0 +1,21 @@
+name: Codex Smoke Test
+on:
+  push:
+    branches: [ develop, feature/*, bugfix/*, release/*, hotfix/* ]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  codex-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Codex Dry Run
+        env:
+          CODEX_QUIET_MODE: 1
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          codex -q -a auto-edit "List the top 5 TODO comments in the repo and group them by area" > /dev/null
