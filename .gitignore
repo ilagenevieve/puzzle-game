@@ -92,3 +92,5 @@ gsap-bonus.tgz
 # Workbox generated files
 workbox-*.js
 sw.js
+# Codex artifacts
+/runs/

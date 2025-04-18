@@ -1,0 +1,23 @@
+name: Auto-merge Dependencies
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: 🌊 Auto-merge Dependency Updates
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: 🔄 Enable auto-merge for Dependabot PRs
+        run: |
+          echo "🌊 Processing Dependabot PR #${{ github.event.pull_request.number }}..."
+          gh pr merge --auto --merge "${{ github.event.pull_request.number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
